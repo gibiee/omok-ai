@@ -141,6 +141,7 @@ class MCTS(object):
         their corresponding probabilities.
         state: the current game state
         temp: temperature parameter in (0, 1] controls the level of exploration
+        확률을 리턴한다는 점이 pure MCTS 와의 차이점!
         """
         for n in range(self._n_playout):
             state_copy = copy.deepcopy(state)
@@ -190,12 +191,8 @@ class MCTSPlayer(object):
             acts, probs = self.mcts.get_move_probs(board, temp)
             move_probs[list(acts)] = probs
             if self._is_selfplay:
-                # add Dirichlet Noise for exploration (needed for
-                # self-play training)
-                move = np.random.choice(
-                    acts,
-                    p=0.75*probs + 0.25*np.random.dirichlet(0.3*np.ones(len(probs)))
-                )
+                # Dirichlet 노이즈를 추가하여 탐색 (자가 학습을 위해 필요함)
+                move = np.random.choice(acts, p=0.75*probs + 0.25*np.random.dirichlet(0.3*np.ones(len(probs))))
                 # update the root node and reuse the search tree
                 self.mcts.update_with_move(move)
             else:
@@ -207,10 +204,9 @@ class MCTSPlayer(object):
 #                location = board.move_to_location(move)
 #                print("AI move: %d,%d\n" % (location[0], location[1]))
 
-            if return_prob:
-                return move, move_probs
-            else:
-                return move
+            if return_prob : return move, move_probs
+            else : return move
+        
         else:
             print("WARNING: the board is full")
 
