@@ -3,8 +3,8 @@ import numpy as np
 
 class Board(object):
     def __init__(self, **kwargs):
-        self.width = int(kwargs.get('width', 8))
-        self.height = int(kwargs.get('height', 8))
+        self.width = int(kwargs.get('width', 15))
+        self.height = int(kwargs.get('height', 15))
         
         # states 변수는 딕셔너리로서, key:보드상에서의 좌표, value:player as pieces type
         self.states = {}

@@ -37,9 +37,10 @@ class TrainPipeline():
         self.pure_mcts_playout_num = 1000
         
         # 초기 policy-value net에서 학습 시작
-        if init_model : self.policy_value_net = PolicyValueNet(self.board_width, self.board_height, model_file=init_model, use_gpu=True)
+        # use_gpu=True 에서 오히려 더 느림
+        if init_model : self.policy_value_net = PolicyValueNet(self.board_width, self.board_height, model_file=init_model)
         # 새로운 policy-value net에서 학습 시작
-        else : self.policy_value_net = PolicyValueNet(self.board_width, self.board_height, use_gpu=True)
+        else : self.policy_value_net = PolicyValueNet(self.board_width, self.board_height)
             
         self.mcts_player = MCTSPlayer(self.policy_value_net.policy_value_fn, c_puct=self.c_puct, n_playout=self.n_playout, is_selfplay=1)
 

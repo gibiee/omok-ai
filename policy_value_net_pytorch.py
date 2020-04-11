@@ -53,10 +53,7 @@ class Net(nn.Module):
         x_val = F.relu(self.val_conv1(x))
         x_val = x_val.view(-1, 2*self.board_width*self.board_height)
         x_val = F.relu(self.val_fc1(x_val))
-        print(f"init:{ F.tanh(self.val_fc2(x_val)) }")
-        print(f"next:{ torch.tanh(self.val_fc2(x_val)) }")
-        #! x_val = F.tanh(self.val_fc2(x_val))
-        x_val = torch.tanh(self.val_fc2(x_val))
+        x_val = torch.tanh(self.val_fc2(x_val)) # F.tanh(self.val_fc2(x_val))와 동일
         return x_act, x_val
 
 
