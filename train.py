@@ -6,18 +6,14 @@ from game import Board, Game
 from mcts_pure import MCTSPlayer as MCTS_Pure
 from mcts_alphaZero import MCTSPlayer
 from policy_value_net_pytorch import PolicyValueNet  # Pytorch
-
 # 넘파이 policy_value_net_numpy는 TypeError: __init__() missing 1 required positional argument
-# from policy_value_net import PolicyValueNet # Theano and Lasagne
-# from policy_value_net_tensorflow import PolicyValueNet # Tensorflow
-# from policy_value_net_keras import PolicyValueNet # Keras
 
 class TrainPipeline():
     def __init__(self, init_model=None):
         # 게임(오목)에 대한 변수들
-        self.board_width = 6
-        self.board_height = 6
-        self.n_in_row = 4
+        self.board_width = 15
+        self.board_height = 15
+        self.n_in_row = 5
         self.board = Board(width=self.board_width, height=self.board_height, n_in_row=self.n_in_row)
         self.game = Game(self.board)
         
@@ -34,16 +30,16 @@ class TrainPipeline():
         self.epochs = 5  # num of train_steps for each update
         self.kl_targ = 0.02
         self.check_freq = 50  # 지정 횟수마다 모델을 체크하고 저장.
-        self.game_batch_num = 1500  # 학습 횟수
+        self.game_batch_num = 100  # 학습 횟수 base:1500
         self.best_win_ratio = 0.0
         
         # train된 policy를 평가하기 위해 상대로 사용되는 pure mcts에 사용된 시뮬레이션 수
         self.pure_mcts_playout_num = 1000
         
         # 초기 policy-value net에서 학습 시작
-        if init_model : self.policy_value_net = PolicyValueNet(self.board_width, self.board_height, model_file=init_model)
+        if init_model : self.policy_value_net = PolicyValueNet(self.board_width, self.board_height, model_file=init_model, use_gpu=True)
         # 새로운 policy-value net에서 학습 시작
-        else : self.policy_value_net = PolicyValueNet(self.board_width, self.board_height)
+        else : self.policy_value_net = PolicyValueNet(self.board_width, self.board_height, use_gpu=True)
             
         self.mcts_player = MCTSPlayer(self.policy_value_net.policy_value_fn, c_puct=self.c_puct, n_playout=self.n_playout, is_selfplay=1)
 

@@ -2,7 +2,6 @@
 import numpy as np
 
 class Board(object):
-
     def __init__(self, **kwargs):
         self.width = int(kwargs.get('width', 8))
         self.height = int(kwargs.get('height', 8))
@@ -121,12 +120,13 @@ class Game(object):
         width = board.width
         height = board.height
 
-        print("Player", player1, "with X".rjust(3))
-        print("Player", player2, "with O".rjust(3))
         print()
-        row_number = ['０','１','２','３','４','５','６','７']
+        print("Player", player1, "with ●")
+        print("Player", player2, "with ○")
+        print()
+        row_number = ['０','１','２','３','４','５','６','７','８','９','10','11','12','13','14']
         print('　', end='')
-        for x in row_number : print(x, end='')
+        for i in range(height) : print(row_number[i], end='')
         print()
         for i in range(height - 1, -1, -1):
             print(f"{i} ", end='')

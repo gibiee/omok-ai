@@ -9,7 +9,7 @@ Tested in PyTorch 0.2.0 and 0.3.0
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import torch.nn.functional as F
+# import torch.nn.functional as F
 from torch.autograd import Variable
 import numpy as np
 
@@ -48,12 +48,16 @@ class Net(nn.Module):
         # action policy layers
         x_act = F.relu(self.act_conv1(x))
         x_act = x_act.view(-1, 4*self.board_width*self.board_height)
+        print(f"init :{ F.log_softmax(self.act_fc1(x_act)) }")
+        print(f"dim=0:{ F.log_softmax(self.act_fc1(x_act), dim=0) }")
+        print(f"dim=1:{ F.log_softmax(self.act_fc1(x_act), dim=1) }")
         x_act = F.log_softmax(self.act_fc1(x_act))
         # state value layers
         x_val = F.relu(self.val_conv1(x))
         x_val = x_val.view(-1, 2*self.board_width*self.board_height)
         x_val = F.relu(self.val_fc1(x_val))
-        x_val = F.tanh(self.val_fc2(x_val))
+        #! x_val = F.tanh(self.val_fc2(x_val))
+        x_val = torch.tanh(self.val_fc2(x_val))
         return x_act, x_val
 
 
