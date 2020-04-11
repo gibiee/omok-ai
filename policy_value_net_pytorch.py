@@ -9,7 +9,7 @@ Tested in PyTorch 0.2.0 and 0.3.0
 import torch
 import torch.nn as nn
 import torch.optim as optim
-# import torch.nn.functional as F
+import torch.nn.functional as F
 from torch.autograd import Variable
 import numpy as np
 
