@@ -7,7 +7,7 @@ from mcts_pure import MCTSPlayer as MCTS_Pure
 from mcts_alphaZero import MCTSPlayer
 from policy_value_net_pytorch import PolicyValueNet  # Pytorch
 
-# 넘파이 policy_value_net_numpy는 에러 : TypeError: __init__() missing 1 required positional argument: 'net_params'
+# 넘파이 policy_value_net_numpy는 TypeError: __init__() missing 1 required positional argument
 # from policy_value_net import PolicyValueNet # Theano and Lasagne
 # from policy_value_net_tensorflow import PolicyValueNet # Tensorflow
 # from policy_value_net_keras import PolicyValueNet # Keras
@@ -121,30 +121,25 @@ class TrainPipeline():
         return win_ratio
 
     def run(self):
-        """run the training pipeline"""
-        try:
-            for i in range(self.game_batch_num):
-                self.collect_selfplay_data(self.play_batch_size)
-                print(f"batch i:{i+1}, episode_len:{self.episode_len}")
+        for i in range(self.game_batch_num):
+            self.collect_selfplay_data(self.play_batch_size)
+            print(f"batch i:{i+1}, episode_len:{self.episode_len}")
+
+            if len(self.data_buffer) > self.batch_size : loss, entropy = self.policy_update()
+
+            # 현재 model의 성능을 체크, 모델 속성을 저장
+            if (i+1) % self.check_freq == 0:
+                print(f"current self-play batch: {i+1}")
+                win_ratio = self.policy_evaluate()
+                self.policy_value_net.save_model('./current_policy.model')
                 
-                if len(self.data_buffer) > self.batch_size : loss, entropy = self.policy_update()
-                    
-                # 현재 model의 성능을 체크, 모델 속성을 저장
-                if (i+1) % self.check_freq == 0:
-                    print(f"current self-play batch: {i+1}")
-                    win_ratio = self.policy_evaluate()
-                    self.policy_value_net.save_model('./current_policy.model')
-                    if win_ratio > self.best_win_ratio:
-                        print("New best policy!!!!!!!!")
-                        self.best_win_ratio = win_ratio
-                        
-                        # update the best_policy
-                        self.policy_value_net.save_model('./best_policy.model')
-                        if (self.best_win_ratio == 1.0 and self.pure_mcts_playout_num < 5000):
-                            self.pure_mcts_playout_num += 1000
-                            self.best_win_ratio = 0.0
-        except KeyboardInterrupt:
-            print('\n\rquit')
+                # 새로운 best_policy가 발견되면
+                if win_ratio > self.best_win_ratio:
+                    self.best_win_ratio = win_ratio
+                    self.policy_value_net.save_model('./best_policy.model')
+                    if (self.best_win_ratio == 1.0 and self.pure_mcts_playout_num < 5000):
+                        self.pure_mcts_playout_num += 1000
+                        self.best_win_ratio = 0.0
 
 if __name__ == '__main__':
     training_pipeline = TrainPipeline()

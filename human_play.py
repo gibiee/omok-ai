@@ -3,8 +3,8 @@ import pickle
 from game import Board, Game
 #from mcts_pure import MCTSPlayer as MCTS_Pure    # 순수 MCTS
 from mcts_alphaZero import MCTSPlayer           # 변형된 MCTS
-from policy_value_net_numpy import PolicyValueNetNumpy
-# from policy_value_net_pytorch import PolicyValueNet  # Pytorch 왜 에러가 날까?
+#from policy_value_net_numpy import PolicyValueNetNumpy
+from policy_value_net_pytorch import PolicyValueNet  # Pytorch 왜 에러가 날까?
 
 class Human(object):
 
@@ -41,13 +41,13 @@ def run():
         game = Game(board)
 
         # 학습된 policy_value_net를 불러온다. (Theano/Lasagne, PyTorch or TensorFlow)
-        # best_policy = PolicyValueNet(width, height, model_file = model_file)
+        best_policy = PolicyValueNet(width, height, model_file = model_file)
         # mcts_player = MCTSPlayer(best_policy.policy_value_fn, c_puct=5, n_playout=400)
 
         # 이미 제공된 model을 불러와서 pure numpy로 작성된 MCTS player에 넣는다.
         try: policy_param = pickle.load(open(model_file, 'rb'))
         except: policy_param = pickle.load(open(model_file, 'rb'), encoding='bytes')
-        best_policy = PolicyValueNetNumpy(width, height, policy_param)
+        # best_policy = PolicyValueNet(width, height, policy_param)
         
         mcts_player = MCTSPlayer(best_policy.policy_value_fn, c_puct=5, n_playout=400)  # n_playout 값이 커지면 성능이 좋아짐
         # pure MCTS를 사용하려면 아래 줄을 사용 (더 큰 n_playout 값으로도 성능이 약함.)
