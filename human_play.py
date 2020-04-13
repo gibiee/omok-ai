@@ -35,9 +35,7 @@ def run():
     width, height = 8, 8
     # width, height = 15, 15
     # model_file = 'best_policy_8_8_5.model'
-    model_file = 'test_policy_8_8_5 (300).model'
-    # model_file = 'test_policy_8_8_5 (100).model'
-    # model_file = 'test_policy_15_15_5 (100).model'
+    model_file = 'test_policy_10.model'
     
     board = Board(width=width, height=height, n_in_row=n)
     game = Game(board)

@@ -22,15 +22,10 @@ class PolicyValueNet():
         self.create_policy_value_net()
         self._loss_train_op()
         if model_file:
-            try:
-                net_params = pickle.load(open(model_file, 'rb'))
-            except:
-                # To support loading pretrained model in python3
-                net_params = pickle.load(open(model_file, 'rb'),
-                                         encoding='bytes')
-            lasagne.layers.set_all_param_values(
-                    [self.policy_net, self.value_net], net_params
-                    )
+            try: net_params = pickle.load(open(model_file, 'rb'))
+            except: net_params = pickle.load(open(model_file, 'rb'), encoding='bytes')
+            lasagne.layers.set_all_param_values([self.policy_net, self.value_net], net_params)
+        print(net_params)
 
     def create_policy_value_net(self):
         """create the policy value network """

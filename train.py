@@ -128,12 +128,13 @@ class TrainPipeline():
             if (i+1) % self.check_freq == 0:
                 print(f"current self-play batch: {i+1}")
                 win_ratio = self.policy_evaluate()
-                self.policy_value_net.save_model('./current_policy.model')
+                # self.policy_value_net.save_model('./current_policy.model')
+                self.policy_value_net.save_model(f'./test_policy_{i+1}.model')
                 
                 # 새로운 best_policy가 발견되면
                 if win_ratio > self.best_win_ratio:
                     self.best_win_ratio = win_ratio
-                    self.policy_value_net.save_model('./best_policy.model')
+                    self.policy_value_net.save_model(f'./best_test_policy_{i+1}.model')
                     if (self.best_win_ratio == 1.0 and self.pure_mcts_playout_num < 5000):
                         self.pure_mcts_playout_num += 1000
                         self.best_win_ratio = 0.0
