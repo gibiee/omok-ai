@@ -146,6 +146,9 @@ class PolicyValueNet():
         
         #return loss.data[0], entropy.data[0]
         #for pytorch version >= 0.5 please use the following line instead.
+        print(f"data[0] : {loss.data[0]}")
+        print(f"data : {loss.data}")
+        print(f"item() : {loss.item()}")
         return loss.item(), entropy.item()
 
     def get_policy_param(self):
