@@ -5,8 +5,7 @@ from collections import defaultdict, deque
 from game import Board, Game
 from mcts_pure import MCTSPlayer as MCTS_Pure
 from mcts_alphaZero import MCTSPlayer
-from policy_value_net_pytorch import PolicyValueNet  # Pytorch
-# 넘파이 policy_value_net_numpy는 TypeError: __init__() missing 1 required positional argument
+from policy_value_net import PolicyValueNet  # Theano and Lasagne
 from datetime import datetime
 
 class TrainPipeline():

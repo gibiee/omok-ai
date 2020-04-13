@@ -3,7 +3,7 @@ import pickle
 from game import Board, Game
 #from mcts_pure import MCTSPlayer as MCTS_Pure    # 순수 MCTS
 from mcts_alphaZero import MCTSPlayer           # 변형된 MCTS
-from policy_value_net_numpy import PolicyValueNetNumpy # pytorch 사용시 utf 에러
+from policy_value_net_numpy import PolicyValueNetNumpy # numpy
 
 class Human(object):
 
