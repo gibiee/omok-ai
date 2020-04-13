@@ -11,7 +11,6 @@ import theano.tensor as T
 import lasagne
 import pickle
 
-
 class PolicyValueNet():
     """policy-value network """
     def __init__(self, board_width, board_height, model_file=None):
@@ -25,7 +24,6 @@ class PolicyValueNet():
             try: net_params = pickle.load(open(model_file, 'rb'))
             except: net_params = pickle.load(open(model_file, 'rb'), encoding='bytes')
             lasagne.layers.set_all_param_values([self.policy_net, self.value_net], net_params)
-        print(net_params)
 
     def create_policy_value_net(self):
         """create the policy value network """
