@@ -9,7 +9,7 @@ from policy_value_net import PolicyValueNet  # Theano and Lasagne
 from datetime import datetime
 
 class TrainPipeline():
-    def __init__(self, init_model=None):
+    def __init__(self):
         # 게임(오목)에 대한 변수들
         self.board_width = 15
         self.board_height = 15
@@ -24,25 +24,26 @@ class TrainPipeline():
         self.n_playout = 400  # num of simulations for each move
         self.c_puct = 5
         self.buffer_size = 10000
-        self.batch_size = 512  # mini-batch size for training : 버퍼 안에 데이터 중 512개를 추출
         self.data_buffer = deque(maxlen=self.buffer_size)
+        self.batch_size = 512  # mini-batch size for training : 버퍼 안에 데이터 중 512개를 추출
         self.play_batch_size = 1
         self.epochs = 5  # num of train_steps for each update
         self.kl_targ = 0.02
         self.check_freq = 50  # 지정 횟수마다 모델을 체크하고 저장.
         self.game_batch_num = 200  # 학습 횟수 base:1500
-        self.best_win_ratio = 0.0
+        # self.best_win_ratio = 0.0
         
         # train된 policy를 평가하기 위해 상대로 사용되는 pure mcts에 사용된 시뮬레이션 수
-        self.pure_mcts_playout_num = 1000
+        # self.pure_mcts_playout_num = 1000
         
         # policy-value net에서 학습 시작
-        init_model = input('현재 저장된 모델의 학습 수 : ')
-        if init_model == 0 or init_model == None : 
+        self.init_model = int(input('현재 저장된 모델의 학습 수 : '))
+        if self.init_model == 0 or self.init_model == None : 
             self.policy_value_net = PolicyValueNet(self.board_width, self.board_height)
         else : 
             self.policy_value_net = PolicyValueNet(self.board_width, self.board_height,
-                                                   model_file=f'policy_{init_model}')
+                                                   model_file=f'./model/policy_{self.init_model}.model')
+            self.data_buffer = pickle.load(open(f'./data_buffer/data_buffer_{self.init_model}.pickle', 'rb')) # encoding='bytes' ?
             
         self.mcts_player = MCTSPlayer(self.policy_value_net.policy_value_fn, c_puct=self.c_puct, n_playout=self.n_playout, is_selfplay=1)
 
@@ -102,11 +103,11 @@ class TrainPipeline():
 
         return loss, entropy
 
+    """
     def policy_evaluate(self, n_games=10):
-        """
         pure MCTS player와 대결하여 훈련된 정책(policy)을 평가한다.
         이것은 단지 train 상황을 모니터링하기 위한 것.
-        """
+        
         current_mcts_player = MCTSPlayer(self.policy_value_net.policy_value_fn, c_puct=self.c_puct, n_playout=self.n_playout)
         pure_mcts_player = MCTS_Pure(c_puct=5, n_playout=self.pure_mcts_playout_num)
         win_cnt = defaultdict(int)
@@ -118,9 +119,10 @@ class TrainPipeline():
         print(f"num_playouts:{self.pure_mcts_playout_num}, win:{win_cnt[1]}, lose:{win_cnt[2]}, tie:{win_cnt[-1]}")
         
         return win_ratio
+    """
 
     def run(self):
-        for i in range(self.game_batch_num):
+        for i in range(self.init_model, self.init_model + self.game_batch_num):
             self.collect_selfplay_data(self.play_batch_size)
             print(f"batch i:{i+1}, episode_len:{self.episode_len}")
 
@@ -128,10 +130,12 @@ class TrainPipeline():
 
             # 현재 model의 성능을 체크, 모델 속성을 저장
             if (i+1) % self.check_freq == 0:
-                print(f"current self-play batch: {i+1}")
-                win_ratio = self.policy_evaluate()
+                print(f"{i+1}번째 batch에서 모델 저장 {datetime.now()}")
+                # win_ratio = self.policy_evaluate()
                 self.policy_value_net.save_model(f'./model/policy_{i+1}.model')
+                pickle.dump(data_buffer, open(f'./data_buffer/data_buffer_{i+1}.pickle', 'wb'), protocol=2)
                 
+                """
                 # 새로운 best_policy가 발견되면
                 if win_ratio > self.best_win_ratio:
                     self.best_win_ratio = win_ratio
@@ -139,9 +143,9 @@ class TrainPipeline():
                     if (self.best_win_ratio == 1.0 and self.pure_mcts_playout_num < 5000):
                         self.pure_mcts_playout_num += 1000
                         self.best_win_ratio = 0.0
+                """
 
 if __name__ == '__main__':
     print(datetime.now())
     training_pipeline = TrainPipeline()
     training_pipeline.run()
-    print(datetime.now())
