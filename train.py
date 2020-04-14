@@ -30,17 +30,19 @@ class TrainPipeline():
         self.epochs = 5  # num of train_steps for each update
         self.kl_targ = 0.02
         self.check_freq = 50  # 지정 횟수마다 모델을 체크하고 저장.
-        self.game_batch_num = 100  # 학습 횟수 base:1500
+        self.game_batch_num = 200  # 학습 횟수 base:1500
         self.best_win_ratio = 0.0
         
         # train된 policy를 평가하기 위해 상대로 사용되는 pure mcts에 사용된 시뮬레이션 수
         self.pure_mcts_playout_num = 1000
         
-        # 초기 policy-value net에서 학습 시작
-        # use_gpu=True 에서 오히려 더 느림
-        if init_model : self.policy_value_net = PolicyValueNet(self.board_width, self.board_height, model_file=init_model)
-        # 새로운 policy-value net에서 학습 시작
-        else : self.policy_value_net = PolicyValueNet(self.board_width, self.board_height)
+        # policy-value net에서 학습 시작
+        init_model = input('현재 저장된 모델의 학습 수 : ')
+        if init_model == 0 or init_model == None : 
+            self.policy_value_net = PolicyValueNet(self.board_width, self.board_height)
+        else : 
+            self.policy_value_net = PolicyValueNet(self.board_width, self.board_height,
+                                                   model_file=f'policy_{init_model}')
             
         self.mcts_player = MCTSPlayer(self.policy_value_net.policy_value_fn, c_puct=self.c_puct, n_playout=self.n_playout, is_selfplay=1)
 
@@ -128,13 +130,12 @@ class TrainPipeline():
             if (i+1) % self.check_freq == 0:
                 print(f"current self-play batch: {i+1}")
                 win_ratio = self.policy_evaluate()
-                # self.policy_value_net.save_model('./current_policy.model')
-                self.policy_value_net.save_model(f'./test_policy_{i+1}.model')
+                self.policy_value_net.save_model(f'./model/policy_{i+1}.model')
                 
                 # 새로운 best_policy가 발견되면
                 if win_ratio > self.best_win_ratio:
                     self.best_win_ratio = win_ratio
-                    self.policy_value_net.save_model(f'./best_test_policy_{i+1}.model')
+                    self.policy_value_net.save_model(f'./model/best_policy_{i+1}.model')
                     if (self.best_win_ratio == 1.0 and self.pure_mcts_playout_num < 5000):
                         self.pure_mcts_playout_num += 1000
                         self.best_win_ratio = 0.0

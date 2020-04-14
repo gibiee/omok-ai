@@ -1,7 +1,7 @@
 from __future__ import print_function
 import pickle
 from game import Board, Game
-#from mcts_pure import MCTSPlayer as MCTS_Pure    # 순수 MCTS
+# from mcts_pure import MCTSPlayer as MCTS_Pure    # 순수 MCTS
 from mcts_alphaZero import MCTSPlayer           # 변형된 MCTS
 from policy_value_net_numpy import PolicyValueNetNumpy # numpy
 
@@ -33,9 +33,9 @@ class Human(object):
 def run():
     n = 5
     width, height = 8, 8
-    # width, height = 15, 15
-    # model_file = 'best_policy_8_8_5.model'
-    model_file = 'test_policy_10.model'
+    #width, height = 15, 15
+    model_file = './model/best_policy_8_8_5.model'
+    #model_file = 'policy_10.model'
     
     board = Board(width=width, height=height, n_in_row=n)
     game = Game(board)
