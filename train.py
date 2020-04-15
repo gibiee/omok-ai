@@ -7,13 +7,14 @@ from mcts_pure import MCTSPlayer as MCTS_Pure
 from mcts_alphaZero import MCTSPlayer
 from policy_value_net import PolicyValueNet  # Theano and Lasagne
 from datetime import datetime
+import pickle
 
 class TrainPipeline():
     def __init__(self):
         # 게임(오목)에 대한 변수들
-        self.board_width = 15
-        self.board_height = 15
-        self.n_in_row = 5
+        self.board_width = 5
+        self.board_height = 5
+        self.n_in_row = 3
         self.board = Board(width=self.board_width, height=self.board_height, n_in_row=self.n_in_row)
         self.game = Game(self.board)
         
@@ -36,14 +37,17 @@ class TrainPipeline():
         # train된 policy를 평가하기 위해 상대로 사용되는 pure mcts에 사용된 시뮬레이션 수
         # self.pure_mcts_playout_num = 1000
         
+        model_path = "./drive/My Drive/model/"
+        data_buffer_path = "./drive/My Drive/data_buffer/"
+        
         # policy-value net에서 학습 시작
         self.init_model = int(input('현재 저장된 모델의 학습 수 : '))
         if self.init_model == 0 or self.init_model == None : 
             self.policy_value_net = PolicyValueNet(self.board_width, self.board_height)
         else : 
             self.policy_value_net = PolicyValueNet(self.board_width, self.board_height,
-                                                   model_file=f'./model/policy_{self.init_model}.model')
-            self.data_buffer = pickle.load(open(f'./data_buffer/data_buffer_{self.init_model}.pickle', 'rb')) # encoding='bytes' ?
+                                                   model_file = f'{model_path}policy_{self.init_model}.model')
+            self.data_buffer = pickle.load(open(f'{data_buffer_path}data_buffer_{self.init_model}.pickle', 'rb')) # encoding='bytes' ?
             
         self.mcts_player = MCTSPlayer(self.policy_value_net.policy_value_fn, c_puct=self.c_puct, n_playout=self.n_playout, is_selfplay=1)
 
@@ -132,8 +136,8 @@ class TrainPipeline():
             if (i+1) % self.check_freq == 0:
                 print(f"{i+1}번째 batch에서 모델 저장 {datetime.now()}")
                 # win_ratio = self.policy_evaluate()
-                self.policy_value_net.save_model(f'./model/policy_{i+1}.model')
-                pickle.dump(data_buffer, open(f'./data_buffer/data_buffer_{i+1}.pickle', 'wb'), protocol=2)
+                self.policy_value_net.save_model(f'{model_path}policy_{i+1}.model')
+                pickle.dump(data_buffer, open(f'{data_buffer_path}data_buffer_{i+1}.pickle', 'wb'), protocol=2)
                 
                 """
                 # 새로운 best_policy가 발견되면
