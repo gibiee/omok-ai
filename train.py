@@ -137,7 +137,7 @@ class TrainPipeline():
                 print(f"{i+1}번째 batch에서 모델 저장 {datetime.now()}")
                 # win_ratio = self.policy_evaluate()
                 self.policy_value_net.save_model(f'{model_path}policy_{i+1}.model')
-                pickle.dump(data_buffer, open(f'{data_buffer_path}data_buffer_{i+1}.pickle', 'wb'), protocol=2)
+                pickle.dump(self.data_buffer, open(f'{data_buffer_path}data_buffer_{i+1}.pickle', 'wb'), protocol=2)
                 
                 """
                 # 새로운 best_policy가 발견되면
