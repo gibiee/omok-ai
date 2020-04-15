@@ -9,6 +9,9 @@ from policy_value_net import PolicyValueNet  # Theano and Lasagne
 from datetime import datetime
 import pickle
 
+model_path = "./drive/My Drive/model/"
+data_buffer_path = "./drive/My Drive/data_buffer/"
+        
 class TrainPipeline():
     def __init__(self):
         # 게임(오목)에 대한 변수들
@@ -36,9 +39,6 @@ class TrainPipeline():
         
         # train된 policy를 평가하기 위해 상대로 사용되는 pure mcts에 사용된 시뮬레이션 수
         # self.pure_mcts_playout_num = 1000
-        
-        model_path = "./drive/My Drive/model/"
-        data_buffer_path = "./drive/My Drive/data_buffer/"
         
         # policy-value net에서 학습 시작
         self.init_model = int(input('현재 저장된 모델의 학습 수 : '))
