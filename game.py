@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from renju_rule import Renju_Rule
 
 class Board(object):
     def __init__(self, **kwargs):
         self.width = int(kwargs.get('width', 15))
         self.height = int(kwargs.get('height', 15))
+        self.n_in_row = int(kwargs.get('n_in_row', 5))
         
         # states 변수는 딕셔너리로서, key:보드상에서의 좌표, value:player as pieces type
         self.states = {}
-        
-        self.n_in_row = int(kwargs.get('n_in_row', 5))
         self.players = [1, 2]  # player1 and player2
 
     def init_board(self, start_player=0):
         if self.width < self.n_in_row or self.height < self.n_in_row:
             raise Exception('board width and height can not be less than {}'.format(self.n_in_row))
-            
-        self.current_player = self.players[start_player]  # start player
+        
+        self.order = start_player # order = 0 → 사람 선공 / 1 → AI 선공
+        self.current_player = self.players[start_player]  # current_player = 1 → 사람 / 2 → AI
         
         # keep available moves in a list
         self.availables = list(range(self.width * self.height))
@@ -72,6 +73,7 @@ class Board(object):
         states = self.states
         n = self.n_in_row
 
+        # moved : 이미 돌이 놓인 자리들
         moved = list(set(range(width * height)) - set(self.availables))
         if len(moved) < self.n_in_row *2-1 : return False, -1
 
@@ -95,7 +97,7 @@ class Board(object):
             if (w in range(n - 1, width) and h in range(height - n + 1) and
                     len(set(states.get(i, -1) for i in range(m, m + n * (width - 1), width - 1))) == 1):
                 return True, player
-
+        
         return False, -1
 
     def game_end(self):
@@ -108,6 +110,32 @@ class Board(object):
     def get_current_player(self):
         return self.current_player
 
+    def set_board_state(self) :
+        # board_state : 전체적인 관점에서 보드의 상태
+        self.board_state = [[0] * self.width for _ in range(self.height)]
+        # stone : 1=흑돌 / 2=백돌
+        if self.order == 0 : stone = [1,2]
+        elif self.order == 1 : stone = [2,1]
+        
+        for move, player in self.states.items() :
+            loc_i, loc_j = self.move_to_location(move)
+            self.board_state[(self.width-1)-loc_i][loc_j] = stone[player-1]
+    
+    def set_forbidden_locations(self) :
+        # forbidden_locations : 흑돌 기준에서 금수의 위치
+        self.set_board_state()
+        rule = Renju_Rule(self.board_state, self.width)
+        self.forbidden_locations = rule.get_forbidden_points(stone=1)
+        
+    def is_you_black(self) :
+        # order, current_player
+        # (0,1) → 사람(흑돌)
+        # (0,2) → AI(백돌)
+        # (1,1) → 사람(백돌)
+        # (1,2) → AI(흑돌)
+        if self.order == 0 and self.current_player == 1 : return True
+        elif self.order == 1 and self.current_player == 2 : return True
+        else : return False
 
 class Game(object):
     """game server"""
@@ -115,26 +143,40 @@ class Game(object):
     def __init__(self, board, **kwargs):
         self.board = board
 
-    def graphic(self, board, player1, player2):
+    def graphic(self, board, player1, player2, order=1):
         """Draw the board and show game info"""
         width = board.width
         height = board.height
 
         print()
-        print("Player", player1, "with ●")
-        print("Player", player2, "with ○")
+        if order == 0 : 
+            print("흑돌(●) : 플레이어")
+            print("백돌(○) : AI")
+        else :
+            print("흑돌(●) : AI")
+            print("백돌(○) : 플레이어")
         print()
-        row_number = ['０','１','２','３','４','５','６','７','８','９','10','11','12','13','14']
+        
+        # print(f"order={board.order}")
+        # print(f"current_player={board.current_player}")
+        if board.current_player == 1 : print("현재 플레이어 : 사람")
+        else : print("현재 플레이어 : AI")
+        
+        # 흑돌일때
+        if board.is_you_black() : board.set_forbidden_locations()
+            
+        row_number = ['⑴','⑵','⑶','⑷','⑸','⑹','⑺','⑻','⑼','⑽','⑾','⑿','⒀','⒁','⒂']
         print('　', end='')
         for i in range(height) : print(row_number[i], end='')
         print()
         for i in range(height - 1, -1, -1):
-            print(f"{i} ", end='')
+            print(row_number[i], end='')
             for j in range(width):
                 loc = i * width + j
                 p = board.states.get(loc, -1)
-                if p == player1 : print('●', end='')
-                elif p == player2 : print('○', end='')
+                if p == player1 : print('●' if order == 0 else '○', end='')
+                elif p == player2 : print('○' if order == 0 else '●', end='')
+                elif board.is_you_black() and (i,j) in board.forbidden_locations : print('Ⅹ', end='')
                 else : print('　', end='')
             print()
 
@@ -148,14 +190,18 @@ class Game(object):
         player2.set_player_ind(p2)
         players = {p1: player1, p2: player2}
         if is_shown:
-            self.graphic(self.board, player1.player, player2.player)
+            if start_player == 0 : self.graphic(self.board, player1.player, player2.player, 0)
+            else : self.graphic(self.board, player1.player, player2.player, 1)
+                
         while True:
             current_player = self.board.get_current_player()
             player_in_turn = players[current_player]
             move = player_in_turn.get_action(self.board)
             self.board.do_move(move)
             if is_shown:
-                self.graphic(self.board, player1.player, player2.player)
+                if start_player == 0 : self.graphic(self.board, player1.player, player2.player, 0)
+                else : self.graphic(self.board, player1.player, player2.player, 1)
+                
             end, winner = self.board.game_end()
             if end:
                 if is_shown:
@@ -174,7 +220,6 @@ class Game(object):
         states, mcts_probs, current_players = [], [], []
         while True:
             move, move_probs = player.get_action(self.board, temp=temp, return_prob=1)
-            
             # store the data
             states.append(self.board.current_state())
             mcts_probs.append(move_probs)
@@ -184,6 +229,7 @@ class Game(object):
             self.board.do_move(move)
             if is_shown:
                 self.graphic(self.board, p1, p2)
+                
             end, winner = self.board.game_end()
             if end:
                 # winner from the perspective of the current player of each state

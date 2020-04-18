@@ -30,10 +30,9 @@ class PolicyValueNet():
         self.state_input = T.tensor4('state')
         self.winner = T.vector('winner')
         self.mcts_probs = T.matrix('mcts_probs')
-        network = lasagne.layers.InputLayer(
-                shape=(None, 4, self.board_width, self.board_height),
-                input_var=self.state_input
-                )
+        network = lasagne.layers.InputLayer(shape=(None, 4, self.board_width, self.board_height), 
+                                            input_var=self.state_input)
+        
         # conv layers
         network = lasagne.layers.Conv2DLayer(
                 network, num_filters=32, filter_size=(3, 3), pad='same')
@@ -100,8 +99,7 @@ class PolicyValueNet():
             [self.state_input, self.mcts_probs, self.winner, self.learning_rate],
             [self.loss, self.entropy],
             updates=updates,
-            allow_input_downcast=True
-            )
+            allow_input_downcast=True)
 
     def get_policy_param(self):
         net_params = lasagne.layers.get_all_param_values(

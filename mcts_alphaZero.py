@@ -9,7 +9,6 @@ network to guide the tree search and evaluate the leaf nodes
 import numpy as np
 import copy
 
-
 def softmax(x):
     probs = np.exp(x - np.max(x))
     probs /= np.sum(probs)
@@ -129,9 +128,7 @@ class MCTS(object):
             if winner == -1:  # tie
                 leaf_value = 0.0
             else:
-                leaf_value = (
-                    1.0 if winner == state.get_current_player() else -1.0
-                )
+                leaf_value = (1.0 if winner == state.get_current_player() else -1.0)
 
         # Update value and visit count of nodes in this traversal.
         node.update_recursive(-leaf_value)
@@ -148,17 +145,22 @@ class MCTS(object):
             self._playout(state_copy)
 
         # calc the move probabilities based on visit counts at the root node
-        act_visits = [(act, node._n_visits)
-                      for act, node in self._root._children.items()]
+        act_visits = [(act, node._n_visits) for act, node in self._root._children.items()]
+
+        if state.is_you_black() :
+            for loc in state.forbidden_locations :
+                forbidden_move = state.location_to_move(loc)
+                act_visits = [(m,v) for m,v in act_visits if m != forbidden_move]
+        
+        # acts = 위치번호 / visits = 방문횟수
         acts, visits = zip(*act_visits)
         act_probs = softmax(1.0/temp * np.log(np.array(visits) + 1e-10))
-
         return acts, act_probs
 
     def update_with_move(self, last_move):
-        """Step forward in the tree, keeping everything we already know
-        about the subtree.
-        """
+        """Step forward in the tree, keeping everything we already know about the subtree."""
+        """돌을 둔 위치가 root노드가 됨"""
+        
         if last_move in self._root._children:
             self._root = self._root._children[last_move]
             self._root._parent = None
@@ -184,14 +186,15 @@ class MCTSPlayer(object):
         self.mcts.update_with_move(-1)
 
     def get_action(self, board, temp=1e-3, return_prob=0):
-        sensible_moves = board.availables
+        sensible_moves = board.availables 
         # the pi vector returned by MCTS as in the alphaGo Zero paper
         move_probs = np.zeros(board.width*board.height)
         if len(sensible_moves) > 0:
-            acts, probs = self.mcts.get_move_probs(board, temp)
+            # acts와 probs에 의해 수가 정해진다.
+            acts, probs = self.mcts.get_move_probs(board, temp)      
             move_probs[list(acts)] = probs
             if self._is_selfplay:
-                # Dirichlet 노이즈를 추가하여 탐색 (자가 학습을 위해 필요함)
+                # (자가 학습을 할 때는) Dirichlet 노이즈를 추가하여 탐색
                 move = np.random.choice(acts, p=0.75*probs + 0.25*np.random.dirichlet(0.3*np.ones(len(probs))))
                 # update the root node and reuse the search tree
                 self.mcts.update_with_move(move)
@@ -199,10 +202,11 @@ class MCTSPlayer(object):
                 # with the default temp=1e-3, it is almost equivalent
                 # to choosing the move with the highest prob
                 move = np.random.choice(acts, p=probs)
+                location = board.move_to_location(move)
+                print(f"AI move: {location[0]+1},{location[1]+1} = {move}")
+                
                 # reset the root node
                 self.mcts.update_with_move(-1)
-#                location = board.move_to_location(move)
-#                print("AI move: %d,%d\n" % (location[0], location[1]))
 
             if return_prob : return move, move_probs
             else : return move

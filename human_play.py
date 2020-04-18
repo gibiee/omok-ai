@@ -6,7 +6,6 @@ from mcts_alphaZero import MCTSPlayer           # 변형된 MCTS
 from policy_value_net_numpy import PolicyValueNetNumpy # numpy
 
 class Human(object):
-
     def __init__(self):
         self.player = None
 
@@ -17,10 +16,11 @@ class Human(object):
         try:
             location = input("돌을 둘 좌표를 입력 : ")
             if isinstance(location, str) : location = [int(n, 10) for n in location.split(",")]
+            location = [value-1 for value in location]
             move = board.location_to_move(location)
         except Exception as e : move = -1
             
-        if move == -1 or move not in board.availables:
+        if move == -1 or move not in board.availables or (board.is_you_black() and tuple(location) in board.forbidden_locations) :
             print("다시 입력하십시오.")
             move = self.get_action(board)
             
@@ -32,10 +32,10 @@ class Human(object):
 
 def run():
     n = 5
-    # width, height = 8, 8
-    width, height = 15, 15
-    #model_file = './model/best_policy_8_8_5.model'
-    model_file = './model/policy_100.model'
+    width, height = 8, 8
+    # width, height = 15, 15
+    model_file = './model/best_policy_8_8_5.model'
+    # model_file = './model/policy_100.model'
     
     board = Board(width=width, height=height, n_in_row=n)
     game = Game(board)
@@ -51,10 +51,13 @@ def run():
     # mcts_player = MCTS_Pure(c_puct=5, n_playout=1000)
 
     human = Human()
-
+    # human2 = Human()
+    
     # start_player=0 → 사람 선공
     # start_player=1 → AI 선공
-    game.start_play(human, mcts_player, start_player=0, is_shown=1)
+    game.start_play(human, mcts_player, start_player=1, is_shown=1)   
+    
+    # game.start_play(human, human2, start_player=0, is_shown=1)
 
 
 if __name__ == '__main__':
