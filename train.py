@@ -73,7 +73,7 @@ class TrainPipeline():
     def collect_selfplay_data(self, n_games=1):
         """collect self-play data for training"""
         for i in range(n_games):
-            winner, play_data = self.game.start_self_play(self.mcts_player, temp=self.temp)
+            winner, play_data = self.game.start_self_play(self.mcts_player, is_shown=1, temp=self.temp)
             play_data = list(play_data)[:]
             self.episode_len = len(play_data)
             

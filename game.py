@@ -11,6 +11,9 @@ class Board(object):
         # states 변수는 딕셔너리로서, key:보드상에서의 좌표, value:player as pieces type
         self.states = {}
         self.players = [1, 2]  # player1 and player2
+        
+        self.board_state = [[0] * self.width for _ in range(self.height)]
+        self.forbidden_locations = []
 
     def init_board(self, start_player=0):
         if self.width < self.n_in_row or self.height < self.n_in_row:
@@ -227,8 +230,7 @@ class Game(object):
             
             # perform a move
             self.board.do_move(move)
-            if is_shown:
-                self.graphic(self.board, p1, p2)
+            if is_shown : self.graphic(self.board, p1, p2)
                 
             end, winner = self.board.game_end()
             if end:
