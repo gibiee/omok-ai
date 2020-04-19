@@ -55,7 +55,7 @@ def run():
     
     # start_player=0 → 사람 선공
     # start_player=1 → AI 선공
-    game.start_play(human, mcts_player, start_player=1, is_shown=1)   
+    game.start_play(human, mcts_player, start_player=0, is_shown=1)   
     
     # game.start_play(human, human2, start_player=0, is_shown=1)
 

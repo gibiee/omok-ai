@@ -199,6 +199,7 @@ class Game(object):
             end, winner = self.board.game_end()
             if end:
                 if is_shown:
+                    self.graphic(self.board, player1.player, player2.player)
                     if winner != -1:
                         print("Game end. Winner is", players[winner])
                     else:
@@ -236,6 +237,7 @@ class Game(object):
                 # reset MCTS root node
                 player.reset_player()
                 if is_shown:
+                    self.graphic(self.board, p1, p2)
                     if winner != -1 : print("Game end. Winner is player:", winner)
                     else : print("Game end. Tie")
                         
