@@ -164,14 +164,12 @@ class Game(object):
         # print(f"current_player={board.current_player}")
         if board.current_player == 1 : print("현재 플레이어 : 사람")
         else : print("현재 플레이어 : AI")
-        
-        # 흑돌일때
-        if board.is_you_black() : board.set_forbidden_locations()
             
         row_number = ['⑴','⑵','⑶','⑷','⑸','⑹','⑺','⑻','⑼','⑽','⑾','⑿','⒀','⒁','⒂']
         print('　', end='')
         for i in range(height) : print(row_number[i], end='')
         print()
+        
         for i in range(height - 1, -1, -1):
             print(row_number[i], end='')
             for j in range(width):
@@ -192,19 +190,18 @@ class Game(object):
         player1.set_player_ind(p1)
         player2.set_player_ind(p2)
         players = {p1: player1, p2: player2}
-        if is_shown:
-            if start_player == 0 : self.graphic(self.board, player1.player, player2.player, 0)
-            else : self.graphic(self.board, player1.player, player2.player, 1)
                 
         while True:
-            current_player = self.board.get_current_player()
-            player_in_turn = players[current_player]
-            move = player_in_turn.get_action(self.board)
-            self.board.do_move(move)
+            # 흑돌일 때, 금수 위치 확인하기
+            if self.board.is_you_black() : self.board.set_forbidden_locations()
             if is_shown:
                 if start_player == 0 : self.graphic(self.board, player1.player, player2.player, 0)
                 else : self.graphic(self.board, player1.player, player2.player, 1)
                 
+            current_player = self.board.get_current_player()
+            player_in_turn = players[current_player]
+            move = player_in_turn.get_action(self.board)
+            self.board.do_move(move)
             end, winner = self.board.game_end()
             if end:
                 if is_shown:
@@ -222,6 +219,13 @@ class Game(object):
         p1, p2 = self.board.players
         states, mcts_probs, current_players = [], [], []
         while True:
+            # 흑돌일 때, 금수 위치 확인하기
+            if self.board.is_you_black() : 
+                print("흑돌")
+                self.board.set_forbidden_locations()
+            else : print("백돌")    
+            if is_shown : self.graphic(self.board, p1, p2)
+                
             move, move_probs = player.get_action(self.board, temp=temp, return_prob=1)
             # store the data
             states.append(self.board.current_state())
@@ -230,7 +234,6 @@ class Game(object):
             
             # perform a move
             self.board.do_move(move)
-            if is_shown : self.graphic(self.board, p1, p2)
                 
             end, winner = self.board.game_end()
             if end:
