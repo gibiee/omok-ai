@@ -9,9 +9,9 @@ from policy_value_net import PolicyValueNet  # Theano and Lasagne
 from datetime import datetime
 import pickle
 
-# model_path = "./drive/My Drive/model/"
-# data_buffer_path = "./drive/My Drive/data_buffer/"
-        
+model_path = "./drive/My Drive/model/"
+data_buffer_path = "./drive/My Drive/data_buffer/"
+
 class TrainPipeline():
     def __init__(self):
         # 게임(오목)에 대한 변수들
