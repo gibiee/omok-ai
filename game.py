@@ -146,13 +146,13 @@ class Game(object):
     def __init__(self, board, **kwargs):
         self.board = board
 
-    def graphic(self, board, player1, player2, order=1):
+    def graphic(self, board, player1, player2):
         """Draw the board and show game info"""
         width = board.width
         height = board.height
 
         print()
-        if order == 0 : 
+        if board.order == 0 : 
             print("흑돌(●) : 플레이어")
             print("백돌(○) : AI")
         else :
@@ -160,8 +160,6 @@ class Game(object):
             print("백돌(○) : 플레이어")
         print()
         
-        # print(f"order={board.order}")
-        # print(f"current_player={board.current_player}")
         if board.current_player == 1 : print("현재 플레이어 : 사람")
         else : print("현재 플레이어 : AI")
             
@@ -169,14 +167,13 @@ class Game(object):
         print('　', end='')
         for i in range(height) : print(row_number[i], end='')
         print()
-        
         for i in range(height - 1, -1, -1):
             print(row_number[i], end='')
             for j in range(width):
                 loc = i * width + j
                 p = board.states.get(loc, -1)
-                if p == player1 : print('●' if order == 0 else '○', end='')
-                elif p == player2 : print('○' if order == 0 else '●', end='')
+                if p == player1 : print('●' if board.order == 0 else '○', end='')
+                elif p == player2 : print('○' if board.order == 0 else '●', end='')
                 elif board.is_you_black() and (i,j) in board.forbidden_locations : print('Ⅹ', end='')
                 else : print('　', end='')
             print()
@@ -190,13 +187,10 @@ class Game(object):
         player1.set_player_ind(p1)
         player2.set_player_ind(p2)
         players = {p1: player1, p2: player2}
-                
         while True:
             # 흑돌일 때, 금수 위치 확인하기
             if self.board.is_you_black() : self.board.set_forbidden_locations()
-            if is_shown:
-                if start_player == 0 : self.graphic(self.board, player1.player, player2.player, 0)
-                else : self.graphic(self.board, player1.player, player2.player, 1)
+            if is_shown : self.graphic(self.board, player1.player, player2.player)
                 
             current_player = self.board.get_current_player()
             player_in_turn = players[current_player]
@@ -220,10 +214,7 @@ class Game(object):
         states, mcts_probs, current_players = [], [], []
         while True:
             # 흑돌일 때, 금수 위치 확인하기
-            if self.board.is_you_black() : 
-                print("흑돌")
-                self.board.set_forbidden_locations()
-            else : print("백돌")    
+            if self.board.is_you_black() : self.board.set_forbidden_locations()
             if is_shown : self.graphic(self.board, p1, p2)
                 
             move, move_probs = player.get_action(self.board, temp=temp, return_prob=1)
