@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 from renju_rule import Renju_Rule
+from IPython.display import clear_output
+import os
 
 class Board(object):
     def __init__(self, **kwargs):
@@ -151,6 +153,9 @@ class Game(object):
         width = board.width
         height = board.height
 
+        clear_output(wait=True)
+        os.system('cls')
+        
         print()
         if board.order == 0 : 
             print("흑돌(●) : 플레이어")
@@ -158,10 +163,10 @@ class Game(object):
         else :
             print("흑돌(●) : AI")
             print("백돌(○) : 플레이어")
-        print()
+        print("--------------------------------\n")
         
-        if board.current_player == 1 : print("현재 플레이어 : 사람")
-        else : print("현재 플레이어 : AI")
+        if board.current_player == 1 : print("당신의 차례입니다.\n")
+        else : print("AI가 수를 두는 중...\n")
             
         row_number = ['⑴','⑵','⑶','⑷','⑸','⑹','⑺','⑻','⑼','⑽','⑾','⑿','⒀','⒁','⒂']
         print('　', end='')
@@ -177,6 +182,9 @@ class Game(object):
                 elif board.is_you_black() and (i,j) in board.forbidden_locations : print('Ⅹ', end='')
                 else : print('　', end='')
             print()
+        if board.last_move != -1 :
+            last_location = [loc+1 for loc in board.move_to_location(board.last_move)]
+            print(f"마지막 돌의 위치 : ({last_location[0]},{last_location[1]})\n")
 
     def start_play(self, player1, player2, start_player=0, is_shown=1):
         """start a game between two players"""

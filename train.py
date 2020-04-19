@@ -47,7 +47,7 @@ class TrainPipeline():
         else : 
             self.policy_value_net = PolicyValueNet(self.board_width, self.board_height,
                                                    model_file = f'{model_path}policy_{self.init_model}.model')
-            self.data_buffer = pickle.load(open(f'{data_buffer_path}data_buffer_{self.init_model}.pickle', 'rb')) # encoding='bytes' ?
+            self.data_buffer = pickle.load(open(f'{data_buffer_path}data_buffer_{self.init_model}.pickle', 'rb'))
             
         self.mcts_player = MCTSPlayer(self.policy_value_net.policy_value_fn, c_puct=self.c_puct, n_playout=self.n_playout, is_selfplay=1)
 
