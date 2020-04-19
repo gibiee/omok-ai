@@ -51,13 +51,13 @@ def run():
     # mcts_player = MCTS_Pure(c_puct=5, n_playout=1000)
 
     human = Human()
-    # human2 = Human()
+    human2 = Human()
     
     # start_player=0 → 사람 선공
     # start_player=1 → AI 선공
-    game.start_play(human, mcts_player, start_player=1, is_shown=1)   
+    # game.start_play(human, mcts_player, start_player=1, is_shown=1)   
     
-    # game.start_play(human, human2, start_player=0, is_shown=1)
+    game.start_play(human, human2, start_player=0, is_shown=1)
 
 
 if __name__ == '__main__':
