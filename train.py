@@ -73,10 +73,9 @@ class TrainPipeline():
     def collect_selfplay_data(self, n_games=1):
         """collect self-play data for training"""
         for i in range(n_games):
-            winner, play_data = self.game.start_self_play(self.mcts_player, temp=self.temp)
+            winner, play_data = self.game.start_self_play(self.mcts_player, is_shown=1, temp=self.temp)
             play_data = list(play_data)[:]
             self.episode_len = len(play_data)
-            
             # 데이터를 확대
             play_data = self.get_equi_data(play_data)
             self.data_buffer.extend(play_data) # deque의 오른쪽(마지막)에 삽입
