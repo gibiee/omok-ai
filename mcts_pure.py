@@ -166,6 +166,14 @@ class MCTS(object):
             state_copy = copy.deepcopy(state)
             self._playout(state_copy)
             
+        # 금수 적용
+        if state.is_you_black() :
+            copy_data = copy.deepcopy(self._root._children)
+            for loc in state.forbidden_locations :
+                forbidden_move = state.location_to_move(loc)
+                del copy_data[forbidden_move]
+            return max(copy_data.items(), key=lambda act_node: act_node[1]._n_visits)[0]
+            
         return max(self._root._children.items(), key=lambda act_node: act_node[1]._n_visits)[0]
 
     def update_with_move(self, last_move):

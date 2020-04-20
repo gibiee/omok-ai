@@ -16,9 +16,9 @@ model_path = "./drive/My Drive/omok_AI/model/"
 class TrainPipeline():
     def __init__(self):
         # 게임(오목)에 대한 변수들
-        self.board_width = 5
-        self.board_height = 5
-        self.n_in_row = 3
+        self.board_width = 15
+        self.board_height = 15
+        self.n_in_row = 5
         self.board = Board(width=self.board_width, height=self.board_height, n_in_row=self.n_in_row)
         self.game = Game(self.board)
         
@@ -35,7 +35,7 @@ class TrainPipeline():
         self.epochs = 5  # num of train_steps for each update
         self.kl_targ = 0.02
         self.check_freq = 50  # 지정 횟수마다 모델을 체크하고 저장.
-        self.game_batch_num = 200  # 학습 횟수 base:1500
+        self.game_batch_num = 500  # 학습 횟수 base:1500
         self.train_num = 0 # 현재 학습 횟수
         
         # policy-value net에서 학습 시작

@@ -32,10 +32,10 @@ class Human(object):
 
 def run():
     n = 5
-    # width, height = 8, 8
-    # model_file = './model/best_policy_8_8_5.model'
-    width, height = 15, 15
-    model_file = './model/policy_350.model'
+    width, height = 8, 8
+    model_file = './model/best_policy_8_8_5.model'
+    # width, height = 15, 15
+    # model_file = './model/policy_350.model'
     
     board = Board(width=width, height=height, n_in_row=n)
     game = Game(board)
