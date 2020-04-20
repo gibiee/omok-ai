@@ -9,9 +9,8 @@ from policy_value_net import PolicyValueNet  # Theano and Lasagne
 from datetime import datetime
 import pickle
 
+train_path = "./drive/My Drive/omok_AI/train/"
 model_path = "./drive/My Drive/omok_AI/model/"
-parameters_path = "./drive/My Drive/omok_AI/parameters/"
-# parameters = [data_buffer, lr_multiplier]
 
 class TrainPipeline():
     def __init__(self):
@@ -36,18 +35,11 @@ class TrainPipeline():
         self.kl_targ = 0.02
         self.check_freq = 50  # 지정 횟수마다 모델을 체크하고 저장.
         self.game_batch_num = 200  # 학습 횟수 base:1500
+        self.train_num = 0 # 현재 학습 횟수
         
         # policy-value net에서 학습 시작
-        self.init_model = int(input('현재 저장된 모델의 학습 수 : '))
-        if self.init_model == 0 or self.init_model == None : 
-            self.policy_value_net = PolicyValueNet(self.board_width, self.board_height)
-        else : 
-            self.policy_value_net = PolicyValueNet(self.board_width, self.board_height,
-                                                   model_file = f'{model_path}policy_{self.init_model}.model')
-            load_data = pickle.load(open(f'{parameters_path}data_{self.init_model}.pickle', 'rb'))
-            self.data_buffer = load_data[0]
-            self.lr_multiplier = load_data[1]
-            
+        self.policy_value_net = PolicyValueNet(self.board_width, self.board_height)
+        
         self.mcts_player = MCTSPlayer(self.policy_value_net.policy_value_fn, c_puct=self.c_puct, n_playout=self.n_playout, is_selfplay=1)
 
     def get_equi_data(self, play_data):
@@ -106,20 +98,26 @@ class TrainPipeline():
         return loss, entropy
 
     def run(self):
-        for i in range(self.init_model, self.init_model + self.game_batch_num):
+        for i in range(self.game_batch_num):
             self.collect_selfplay_data(self.play_batch_size)
-            print(f"batch i:{i+1}, episode_len:{self.episode_len}")
+            self.train_num += 1
+            print(f"batch i:{self.train_num}, episode_len:{self.episode_len}")
 
             if len(self.data_buffer) > self.batch_size : loss, entropy = self.policy_update()
 
             # 현재 model의 성능을 체크, 모델 속성을 저장
             if (i+1) % self.check_freq == 0:
-                print(f"{i+1}번째 batch에서 모델 저장 {datetime.now()}")
+                print(f"★ {i+1}번째 batch에서 모델 저장 : {datetime.now()}")
                 # win_ratio = self.policy_evaluate()
-                self.policy_value_net.save_model(f'{model_path}policy_{i+1}.model')
-                pickle.dump([self.data_buffer, self.lr_multiplier], open(f'{parameters_path}data_{i+1}.pickle', 'wb'), protocol=2)
+                self.policy_value_net.save_model(f'{model_path}policy_{self.train_num}.model')
+                pickle.dump(self, open(f'{train_path}train_{self.train_num}.pickle', 'wb'), protocol=2)
 
 if __name__ == '__main__':
-    print(datetime.now())
-    training_pipeline = TrainPipeline()
+    print(f"★ 학습시작 : {datetime.now()}")
+    
+    init_num = int(input('현재까지 저장된 모델의 학습 수 : '))
+    if init_num == 0 or init_num == None : training_pipeline = TrainPipeline()
+    else : training_pipeline = pickle.load(open(f'{train_path}train_{init_num}.pickle', 'rb'))
+    
     training_pipeline.run()
+    
