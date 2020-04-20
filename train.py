@@ -8,7 +8,8 @@ from mcts_alphaZero import MCTSPlayer
 from policy_value_net import PolicyValueNet  # Theano and Lasagne
 from datetime import datetime
 import pickle
-
+import sys
+sys.setrecursionlimit(10**8)
 train_path = "./drive/My Drive/omok_AI/train/"
 model_path = "./drive/My Drive/omok_AI/model/"
 
