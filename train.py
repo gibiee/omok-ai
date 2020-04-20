@@ -9,15 +9,16 @@ from policy_value_net import PolicyValueNet  # Theano and Lasagne
 from datetime import datetime
 import pickle
 
-model_path = "./drive/My Drive/model/"
-data_buffer_path = "./drive/My Drive/data_buffer/"
+model_path = "./drive/My Drive/omok_AI/model/"
+parameters_path = "./drive/My Drive/omok_AI/parameters/"
+# parameters = [data_buffer, lr_multiplier]
 
 class TrainPipeline():
     def __init__(self):
         # 게임(오목)에 대한 변수들
-        self.board_width = 15
-        self.board_height = 15
-        self.n_in_row = 5
+        self.board_width = 5
+        self.board_height = 5
+        self.n_in_row = 3
         self.board = Board(width=self.board_width, height=self.board_height, n_in_row=self.n_in_row)
         self.game = Game(self.board)
         
@@ -43,7 +44,9 @@ class TrainPipeline():
         else : 
             self.policy_value_net = PolicyValueNet(self.board_width, self.board_height,
                                                    model_file = f'{model_path}policy_{self.init_model}.model')
-            self.data_buffer = pickle.load(open(f'{data_buffer_path}data_buffer_{self.init_model}.pickle', 'rb'))
+            load_data = pickle.load(open(f'{parameters_path}data_{self.init_model}.pickle', 'rb'))
+            self.data_buffer = load_data[0]
+            self.lr_multiplier = load_data[1]
             
         self.mcts_player = MCTSPlayer(self.policy_value_net.policy_value_fn, c_puct=self.c_puct, n_playout=self.n_playout, is_selfplay=1)
 
@@ -114,7 +117,7 @@ class TrainPipeline():
                 print(f"{i+1}번째 batch에서 모델 저장 {datetime.now()}")
                 # win_ratio = self.policy_evaluate()
                 self.policy_value_net.save_model(f'{model_path}policy_{i+1}.model')
-                pickle.dump(self.data_buffer, open(f'{data_buffer_path}data_buffer_{i+1}.pickle', 'wb'), protocol=2)
+                pickle.dump([self.data_buffer, self.lr_multiplier], open(f'{parameters_path}data_{i+1}.pickle', 'wb'), protocol=2)
 
 if __name__ == '__main__':
     print(datetime.now())
