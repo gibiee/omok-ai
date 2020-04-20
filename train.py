@@ -35,7 +35,7 @@ class TrainPipeline():
         self.epochs = 5  # num of train_steps for each update
         self.kl_targ = 0.02
         self.check_freq = 50  # 지정 횟수마다 모델을 체크하고 저장.
-        self.game_batch_num = 500  # 학습 횟수 base:1500
+        self.game_batch_num = 200  # 학습 횟수 base:1500
         
         # policy-value net에서 학습 시작
         self.init_model = int(input('현재 저장된 모델의 학습 수 : '))
