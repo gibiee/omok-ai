@@ -10,18 +10,15 @@ class Board(object):
         self.height = int(kwargs.get('height', 15))
         self.n_in_row = int(kwargs.get('n_in_row', 5))
         
-        # states : 딕셔너리 / key:보드상에서의 좌표, value:player as pieces type
+        # states : 딕셔너리 / key:보드상에서의 좌표, value:플레이어 번호
         # states_loc : 전체적인 관점에서 보드의 상태
         self.states, self.states_loc = {}, [[0] * self.width for _ in range(self.height)]
         self.players = [1, 2]  # player1 and player2
-        
         self.forbidden_locations = []
 
     def init_board(self, start_player=0):     
         self.order = start_player # order = 0 → 사람 선공(흑돌) / 1 → AI 선공(흑돌)
         self.current_player = self.players[start_player]  # current_player = 1 → 사람 / 2 → AI
-        
-        self.availables = list(range(self.width * self.height)) # 돌이 없는 위치
         self.last_move, self.last_loc = -1, -1
 
     def move_to_location(self, move):
@@ -61,8 +58,7 @@ class Board(object):
     def do_move(self, move):
         self.states[move] = self.current_player
         loc = self.move_to_location(move)
-        self.set_states_loc(loc)
-        self.availables.remove(move)
+        self.states_loc[loc[0]][loc[1]] = 1 if self.is_you_black() else 2
         self.current_player = (self.players[0] if self.current_player == self.players[1] else self.players[1])
         self.last_move, self.last_loc = move, loc
 
@@ -73,7 +69,7 @@ class Board(object):
         n = self.n_in_row
 
         # moved : 이미 돌이 놓인 자리들
-        moved = list(set(range(width * height)) - set(self.availables))
+        moved = list(self.states.keys())
         if len(moved) < self.n_in_row * 2-1 : return False, -1
 
         for m in moved:
@@ -102,16 +98,11 @@ class Board(object):
     def game_end(self):
         win, winner = self.has_a_winner()
         if win : return True, winner
-        elif not len(self.availables) : return True, -1
+        elif len(self.states) == self.width*self.height : return True, -1
         return False, -1
 
     def get_current_player(self):
         return self.current_player
-
-    def set_states_loc(self, loc) :
-        stone = 1 if self.is_you_black() else 2 # stone : 1=흑돌 / 2=백돌
-        x,y = loc[0], loc[1]
-        self.states_loc[x][y] = stone
     
     def set_forbidden_locations(self) :
         # forbidden_locations : 흑돌 기준에서 금수의 위치
@@ -128,12 +119,13 @@ class Board(object):
         elif self.order == 1 and self.current_player == 2 : return True
         else : return False
 
-class Board_9_9 :
+class Board_9_9(Board) :
     def __init__(self, board) :
-        self.width, self.height = 9, 9
+        self.width, self.height, self.n_in_row = 9, 9, 5
         self.order, self.current_player = board.order, board.current_player
-        self.availables = list(range(self.width * self.height)) # 돌이 없는 위치
         self.forbidden_locations = []
+        self.players = board.players
+        self.last_move, self.last_loc = board.last_move, board.last_loc
         
         if board.last_loc == -1 : last_y, last_x = 7,7
         else : last_y, last_x = board.last_loc
@@ -146,6 +138,7 @@ class Board_9_9 :
         elif 5 <= last_x <= 9 : x1, x2 = last_x-4, last_x+4
         else : x1, x2 = 6,14
 
+        self.bias_y, self.bias_x = y1, x1
         self.states = {}
         self.states_loc = np.array(board.states_loc)[y1:y2+1, x1:x2+1].tolist()
         
@@ -158,20 +151,12 @@ class Board_9_9 :
         player = [[1,2],[2,1]]
         for y in range(9) :
             for x in range(9) :
-                if self.states_loc[y][x] == 1 :
-                    self.states[m] = player[board.order][0]
-                    self.availables.remove(m)
-                elif self.states_loc[y][x] == 2 :
-                    self.states[m] = player[board.order][1]
-                    self.availables.remove(m)
+                if self.states_loc[y][x] == 1 : self.states[m] = player[board.order][0]
+                elif self.states_loc[y][x] == 2 : self.states[m] = player[board.order][1]
                 m += 1
                     
         print(f"보드 states = {board.states}")
         print(f"자른 states = {self.states}")
-        
-        # availables : 돌이 없는 위치 (금수 포함)
-        print(f"보드 availables = {board.availables}")
-        print(f"자른 availables = {self.availables}")
         
         # 금수가 자른 보드 9x9 내에 있는지 확인
         for locY, locX in board.forbidden_locations :
@@ -181,32 +166,8 @@ class Board_9_9 :
         
         print(f"보드 forbidden = {board.forbidden_locations}")
         print(f"자른 forbidden = {self.forbidden_locations}")
-        
-    def move_to_location(self, move):
-        h = move // self.width
-        w = move % self.width
-        return [h, w]
-    
-    def location_to_move(self, location):
-        if len(location) != 2 : return -1
-        h, w = location[0], location[1]
-        move = h * self.width + w
-        if move not in range(self.width * self.height) : return -1
-        return move
-        
-        
-        
-    
-    def get_current_player(self):
-        return self.current_player
-    
-    def is_you_black(self) :
-        if self.order == 0 and self.current_player == 1 : return True
-        elif self.order == 1 and self.current_player == 2 : return True
-        else : return False
 
 class Game(object):
-   
     def __init__(self, board, **kwargs):
         self.board = board
 
@@ -245,8 +206,6 @@ class Game(object):
             print()
         if board.last_loc != -1 :
             print(f"마지막 돌의 위치 : ({board.last_loc[0]},{board.last_loc[1]})\n")
-  
-        # t = Board_9_9(board)
 
     def start_play(self, player1, player2, start_player=0, is_shown=1):
         self.board.init_board(start_player)
@@ -261,7 +220,9 @@ class Game(object):
                 
             current_player = self.board.get_current_player()
             player_in_turn = players[current_player]
-            move = player_in_turn.get_action(self.board)
+            test = Board_9_9(self.board)
+            move = player_in_turn.get_action(test) # 추후에 bias 적용할것
+            # move = player_in_turn.get_action(self.board)
             self.board.do_move(move)
             end, winner = self.board.game_end()
             if end:

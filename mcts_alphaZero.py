@@ -8,12 +8,11 @@ def softmax(x):
 
 
 class TreeNode(object):
-    """MCTS 트리의 노드.
+    """ MCTS 트리의 노드.
     Q : its own value
     P : prior probability
     u : visit-count-adjusted prior score
     """
-
     def __init__(self, parent, prior_p):
         self._parent = parent
         self._children = {}  # a map from action to TreeNode
@@ -104,10 +103,8 @@ class MCTS(object):
         # (action, probability) tuples p and also a score v in [-1, 1]
         # for the current player.
         action_probs, leaf_value = self._policy(state)
-        # Check for end of game.
         end, winner = state.game_end()
-        if not end:
-            node.expand(action_probs)
+        if not end : node.expand(action_probs)
         else:
             # for end state，return the "true" leaf_value
             if winner == -1:  # tie
@@ -115,20 +112,13 @@ class MCTS(object):
             else:
                 leaf_value = (1.0 if winner == state.get_current_player() else -1.0)
 
-        # Update value and visit count of nodes in this traversal.
         node.update_recursive(-leaf_value)
 
     def get_move_probs(self, state, temp=1e-3):
-        """Run all playouts sequentially and return the available actions and
-        their corresponding probabilities.
-        state: the current game state
-        temp: temperature parameter in (0, 1] controls the level of exploration
-        """
         for n in range(self._n_playout):
             state_copy = copy.deepcopy(state)
             self._playout(state_copy)
 
-        # calc the move probabilities based on visit counts at the root node
         act_visits = [(act, node._n_visits) for act, node in self._root._children.items()]
 
         if state.is_you_black() :
@@ -143,11 +133,8 @@ class MCTS(object):
         return acts, act_probs
 
     def update_with_move(self, last_move):
-        """Step forward in the tree, keeping everything we already know about the subtree."""
-        """돌을 둔 위치가 root노드가 됨"""
-        
         if last_move in self._root._children:
-            self._root = self._root._children[last_move]
+            self._root = self._root._children[last_move] # 돌을 둔 위치가 root노드가 됨
             self._root._parent = None
         else:
             self._root = TreeNode(None, 1.0)
@@ -157,8 +144,6 @@ class MCTS(object):
 
 
 class MCTSPlayer(object):
-    """AI player based on MCTS"""
-
     def __init__(self, policy_value_function,
                  c_puct=5, n_playout=2000, is_selfplay=0):
         self.mcts = MCTS(policy_value_function, c_puct, n_playout)
@@ -171,25 +156,19 @@ class MCTSPlayer(object):
         self.mcts.update_with_move(-1)
 
     def get_action(self, board, temp=1e-3, return_prob=0):
-        sensible_moves = board.availables 
-        # the pi vector returned by MCTS as in the alphaGo Zero paper
         move_probs = np.zeros(board.width*board.height)
-        if len(sensible_moves) > 0:
-            # acts와 probs에 의해 수가 정해진다.
+        if board.width*board.height - len(board.states) > 0:
+            # acts와 probs에 의해 착수 위치가 정해진다.
             acts, probs = self.mcts.get_move_probs(board, temp)      
             move_probs[list(acts)] = probs
             if self._is_selfplay:
                 # (자가 학습을 할 때는) Dirichlet 노이즈를 추가하여 탐색
                 move = np.random.choice(acts, p=0.75*probs + 0.25*np.random.dirichlet(0.3*np.ones(len(probs))))
-                # update the root node and reuse the search tree
                 self.mcts.update_with_move(move)
             else:
-                # with the default temp=1e-3, it is almost equivalent
-                # to choosing the move with the highest prob
                 move = np.random.choice(acts, p=probs) # 확률론적인 방법
                 # move = acts[np.argmax(probs)] # 결정론적인 방법
                 location = board.move_to_location(move)
-                # reset the root node
                 self.mcts.update_with_move(-1)
 
             if return_prob : return move, move_probs
