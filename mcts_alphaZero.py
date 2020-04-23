@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Monte Carlo Tree Search in AlphaGo Zero style, which uses a policy-value
-network to guide the tree search and evaluate the leaf nodes
-
-@author: Junxiao Song
-"""
-
 import numpy as np
 import copy
 
@@ -16,10 +8,10 @@ def softmax(x):
 
 
 class TreeNode(object):
-    """A node in the MCTS tree.
-
-    Each node keeps track of its own value Q, prior probability P, and
-    its visit-count-adjusted prior score u.
+    """MCTS 트리의 노드.
+    Q : its own value
+    P : prior probability
+    u : visit-count-adjusted prior score
     """
 
     def __init__(self, parent, prior_p):
@@ -32,16 +24,14 @@ class TreeNode(object):
 
     def expand(self, action_priors):
         """Expand tree by creating new children.
-        action_priors: a list of tuples of actions and their prior probability
-            according to the policy function.
+        action_priors: a list of tuples of actions and their prior probability according to the policy function.
         """
         for action, prob in action_priors:
             if action not in self._children:
                 self._children[action] = TreeNode(self, prob)
 
     def select(self, c_puct):
-        """Select action among children that gives maximum action value Q
-        plus bonus u(P).
+        """Select action among children that gives maximum action value Q plus bonus u(P).
         Return: A tuple of (action, next_node)
         """
         return max(self._children.items(),
@@ -49,8 +39,7 @@ class TreeNode(object):
 
     def update(self, leaf_value):
         """Update node values from leaf evaluation.
-        leaf_value: the value of subtree evaluation from the current player's
-            perspective.
+        leaf_value: the value of subtree evaluation from the current player's perspective.
         """
         # Count visit.
         self._n_visits += 1
@@ -58,8 +47,7 @@ class TreeNode(object):
         self._Q += 1.0*(leaf_value - self._Q) / self._n_visits
 
     def update_recursive(self, leaf_value):
-        """Like a call to update(), but applied recursively for all ancestors.
-        """
+        """Like a call to update(), but applied recursively for all ancestors."""
         # If it is not root, this node's parent should be updated first.
         if self._parent:
             self._parent.update_recursive(-leaf_value)
@@ -67,10 +55,8 @@ class TreeNode(object):
 
     def get_value(self, c_puct):
         """Calculate and return the value for this node.
-        It is a combination of leaf evaluations Q, and this node's prior
-        adjusted for its visit count, u.
-        c_puct: a number in (0, inf) controlling the relative impact of
-            value Q, and prior probability P, on this node's score.
+        It is a combination of leaf evaluations Q, and this node's prior adjusted for its visit count, u.
+        c_puct: a number in (0, inf) controlling the relative impact of value Q, and prior probability P, on this node's score.
         """
         self._u = (c_puct * self._P *
                    np.sqrt(self._parent._n_visits) / (1 + self._n_visits))
@@ -109,8 +95,7 @@ class MCTS(object):
         """
         node = self._root
         while(1):
-            if node.is_leaf():
-                break
+            if node.is_leaf() : break
             # Greedily select next move.
             action, node = node.select(self._c_puct)
             state.do_move(action)
@@ -138,7 +123,6 @@ class MCTS(object):
         their corresponding probabilities.
         state: the current game state
         temp: temperature parameter in (0, 1] controls the level of exploration
-        확률을 리턴한다는 점이 pure MCTS 와의 차이점!
         """
         for n in range(self._n_playout):
             state_copy = copy.deepcopy(state)
@@ -155,6 +139,7 @@ class MCTS(object):
         # acts = 위치번호 / visits = 방문횟수
         acts, visits = zip(*act_visits)
         act_probs = softmax(1.0/temp * np.log(np.array(visits) + 1e-10))
+        
         return acts, act_probs
 
     def update_with_move(self, last_move):
@@ -201,7 +186,8 @@ class MCTSPlayer(object):
             else:
                 # with the default temp=1e-3, it is almost equivalent
                 # to choosing the move with the highest prob
-                move = np.random.choice(acts, p=probs)
+                move = np.random.choice(acts, p=probs) # 확률론적인 방법
+                # move = acts[np.argmax(probs)] # 결정론적인 방법
                 location = board.move_to_location(move)
                 # reset the root node
                 self.mcts.update_with_move(-1)

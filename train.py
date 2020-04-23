@@ -35,7 +35,7 @@ class TrainPipeline():
         self.epochs = 5  # num of train_steps for each update
         self.kl_targ = 0.02
         self.check_freq = 50  # 지정 횟수마다 모델을 체크하고 저장.
-        self.game_batch_num = 500  # 학습 횟수 base:1500
+        self.game_batch_num = 3000  # 학습 횟수 base:1500
         self.train_num = 0 # 현재 학습 횟수
         
         # policy-value net에서 학습 시작
@@ -108,7 +108,7 @@ class TrainPipeline():
 
             # 현재 model의 성능을 체크, 모델 속성을 저장
             if (i+1) % self.check_freq == 0:
-                print(f"★ {i+1}번째 batch에서 모델 저장 : {datetime.now()}")
+                print(f"★ {self.train_num}번째 batch에서 모델 저장 : {datetime.now()}")
                 # win_ratio = self.policy_evaluate()
                 self.policy_value_net.save_model(f'{model_path}policy_{self.train_num}.model')
                 pickle.dump(self, open(f'{train_path}train_{self.train_num}.pickle', 'wb'), protocol=2)

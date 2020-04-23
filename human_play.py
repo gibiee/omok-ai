@@ -1,7 +1,7 @@
 from __future__ import print_function
 import pickle
 from game import Board, Game
-# from mcts_pure import MCTSPlayer as MCTS_Pure    # 순수 MCTS
+from mcts_pure import MCTSPlayer as MCTS_Pure    # 순수 MCTS
 from mcts_alphaZero import MCTSPlayer           # 변형된 MCTS
 from policy_value_net_numpy import PolicyValueNetNumpy # numpy
 
@@ -16,7 +16,6 @@ class Human(object):
         try:
             location = input("돌을 둘 좌표를 입력 : ")
             if isinstance(location, str) : location = [int(n, 10) for n in location.split(",")]
-            location = [value-1 for value in location]
             move = board.location_to_move(location)
         except Exception as e : move = -1
             
@@ -32,10 +31,10 @@ class Human(object):
 
 def run():
     n = 5
-    width, height = 8, 8
-    model_file = './model/best_policy_8_8_5.model'
-    # width, height = 15, 15
-    # model_file = './model/policy_350.model'
+    # width, height = 8, 8
+    # model_file = './model/best_policy_8_8_5.model'
+    width, height = 15, 15
+    model_file = './model/policy_1300.model'
     
     board = Board(width=width, height=height, n_in_row=n)
     game = Game(board)

@@ -118,9 +118,7 @@ class MCTS(object):
         """
         node = self._root
         while(1):
-            if node.is_leaf():
-
-                break
+            if node.is_leaf(): break
             # Greedily select next move.
             action, node = node.select(self._c_puct)
             state.do_move(action)
@@ -165,7 +163,7 @@ class MCTS(object):
         for n in range(self._n_playout):
             state_copy = copy.deepcopy(state)
             self._playout(state_copy)
-            
+        
         # 금수 적용
         if state.is_you_black() :
             copy_data = copy.deepcopy(self._root._children)

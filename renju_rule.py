@@ -149,4 +149,4 @@ class Renju_Rule(object):
             for x in range(len(self.board[0])):
                 if self.board[y][x] : continue
                 if self.forbidden_point(x, y, stone) : coords.append((x, y))
-        return [(self.board_size-y-1,x) for x,y in coords]
+        return [(y,x) for x,y in coords]
