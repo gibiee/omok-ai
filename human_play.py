@@ -36,22 +36,21 @@ def run():
     n = 5
     # width, height = 8, 8
     # model_file = './model/best_policy_8_8_5.model'
-    # width, height = 15, 15
-    # model_file = './model/policy_1300.model'
     width, height = 15, 15
-    model_file = './model/policy_9_9_150.model'
+    model_file = './model/policy_1300.model'
+    # width, height = 15, 15
+    # model_file = './model/policy_9_9_150.model'
     
     board = Board(width=width, height=height, n_in_row=n)
     game = Game(board)
 
     # 이미 제공된 model을 불러와서 pure numpy로 작성된 MCTS player에 넣는다.
-    try: policy_param = pickle.load(open(model_file, 'rb'))
-    except: policy_param = pickle.load(open(model_file, 'rb'), encoding='bytes')
+    policy_param = pickle.load(open(model_file, 'rb'))
 
     # 학습된 policy_value_net를 불러온다.
-    # best_policy = PolicyValueNetNumpy(width, height, policy_param)
-    best_policy = PolicyValueNetNumpy(9, 9, policy_param) # 9x9보드로 자를때 사용
-    mcts_player = MCTSPlayer(best_policy.policy_value_fn, c_puct=5, n_playout=400)  # n_playout 값이 커지면 성능이 좋아짐
+    best_policy = PolicyValueNetNumpy(width, height, policy_param)
+    # best_policy = PolicyValueNetNumpy(9, 9, policy_param) # 9x9보드로 자를때 사용
+    mcts_player = MCTSPlayer(best_policy.policy_value_fn, c_puct=5, n_playout=400) # n_playout값 : 성능
     # pure MCTS를 사용하려면 아래 줄을 사용 (더 큰 n_playout 값으로도 성능이 약함.)
     # mcts_player = MCTS_Pure(c_puct=5, n_playout=1000)
 
@@ -63,7 +62,6 @@ def run():
     game.start_play(human, mcts_player, start_player=0, is_shown=1)   
     
     #game.start_play(human, human2, start_player=0, is_shown=1)
-
 
 if __name__ == '__main__':
     run()

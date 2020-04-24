@@ -126,12 +126,11 @@ if __name__ == '__main__':
             training_pipeline.board.states_loc = training_pipeline.board.board_state
             del training_pipeline.board.board_state
         if 'last_loc' not in vars(training_pipeline.board) :
-             print("변수 보정 작업 : training_pipeline.board.last_loc")
+            print("변수 보정 작업 : training_pipeline.board.last_loc")
             training_pipeline.board.last_loc = training_pipeline.board.move_to_location(training_pipeline.board.last_move)
         if 'availables' in vars(training_pipeline.board) :
             print("변수 보정 작업 : training_pipeline.board.availables")
             del training_pipeline.board.availables
-
-            
-    # training_pipeline.run()
+      
+    training_pipeline.run()
     

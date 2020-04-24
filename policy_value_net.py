@@ -1,10 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-An implementation of the policyValueNet in Theano and Lasagne
-
-@author: Junxiao Song
-"""
-
 from __future__ import print_function
 import theano
 import theano.tensor as T
@@ -12,7 +6,6 @@ import lasagne
 import pickle
 
 class PolicyValueNet():
-    """policy-value network """
     def __init__(self, board_width, board_height, model_file=None):
         self.board_width = board_width
         self.board_height = board_height
@@ -26,7 +19,6 @@ class PolicyValueNet():
             lasagne.layers.set_all_param_values([self.policy_net, self.value_net], net_params)
 
     def create_policy_value_net(self):
-        """create the policy value network """
         self.state_input = T.tensor4('state')
         self.winner = T.vector('winner')
         self.mcts_probs = T.matrix('mcts_probs')
@@ -66,11 +58,9 @@ class PolicyValueNet():
         output: a list of (action, probability) tuples for each available
             action and the score of the board state
         """
-        legal_positions = board.availables
+        legal_positions = list(set(range(board_width*board_height)) - set(board.states.keys()))
         current_state = board.current_state()
-        act_probs, value = self.policy_value(
-            current_state.reshape(-1, 4, self.board_width, self.board_height)
-            )
+        act_probs, value = self.policy_value(current_state.reshape(-1, 4, self.board_width, self.board_height))
         act_probs = zip(legal_positions, act_probs.flatten()[legal_positions])
         return act_probs, value[0][0]
 

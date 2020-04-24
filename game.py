@@ -220,9 +220,9 @@ class Game(object):
                 
             current_player = self.board.get_current_player()
             player_in_turn = players[current_player]
-            test = Board_9_9(self.board)
-            move = player_in_turn.get_action(test) # 추후에 bias 적용할것
-            # move = player_in_turn.get_action(self.board)
+            # test = Board_9_9(self.board)
+            # move = player_in_turn.get_action(test) # 추후에 bias 적용할것
+            move = player_in_turn.get_action(self.board)
             self.board.do_move(move)
             end, winner = self.board.game_end()
             if end:

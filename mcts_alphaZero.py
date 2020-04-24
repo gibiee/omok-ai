@@ -6,7 +6,6 @@ def softmax(x):
     probs /= np.sum(probs)
     return probs
 
-
 class TreeNode(object):
     """ MCTS 트리의 노드.
     Q : its own value
@@ -33,8 +32,7 @@ class TreeNode(object):
         """Select action among children that gives maximum action value Q plus bonus u(P).
         Return: A tuple of (action, next_node)
         """
-        return max(self._children.items(),
-                   key=lambda act_node: act_node[1].get_value(c_puct))
+        return max(self._children.items(), key=lambda act_node: act_node[1].get_value(c_puct))
 
     def update(self, leaf_value):
         """Update node values from leaf evaluation.
@@ -121,6 +119,7 @@ class MCTS(object):
 
         act_visits = [(act, node._n_visits) for act, node in self._root._children.items()]
 
+        # 금수 위치는 착수 확률에서 제외한다.
         if state.is_you_black() :
             for loc in state.forbidden_locations :
                 forbidden_move = state.location_to_move(loc)
