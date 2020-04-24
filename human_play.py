@@ -1,9 +1,7 @@
-from __future__ import print_function
 import pickle
 from game import Board, Game
-from mcts_pure import MCTSPlayer as MCTS_Pure    # 순수 MCTS
-from mcts_alphaZero import MCTSPlayer           # 변형된 MCTS
-from policy_value_net_numpy import PolicyValueNetNumpy # numpy
+from mcts_alphaZero import MCTSPlayer
+from policy_value_net_numpy import PolicyValueNetNumpy
 
 class Human(object):
     def __init__(self):
@@ -44,16 +42,12 @@ def run():
     board = Board(width=width, height=height, n_in_row=n)
     game = Game(board)
 
-    # 이미 제공된 model을 불러와서 pure numpy로 작성된 MCTS player에 넣는다.
+    # 이미 제공된 model을 불러와서 학습된 policy_value_net을 얻는다.
     policy_param = pickle.load(open(model_file, 'rb'), encoding='bytes')
-
-    # 학습된 policy_value_net를 불러온다.
     best_policy = PolicyValueNetNumpy(width, height, policy_param)
-    # best_policy = PolicyValueNetNumpy(9, 9, policy_param) # 9x9보드로 자를때 사용
+    # best_policy = PolicyValueNetNumpy(9, 9, policy_param) # 9x9보드로 자를 때
     mcts_player = MCTSPlayer(best_policy.policy_value_fn, c_puct=5, n_playout=400) # n_playout값 : 성능
-    # pure MCTS를 사용하려면 아래 줄을 사용 (더 큰 n_playout 값으로도 성능이 약함.)
-    # mcts_player = MCTS_Pure(c_puct=5, n_playout=1000)
-
+    
     human = Human()
     # human2 = Human()
     

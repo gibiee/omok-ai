@@ -70,7 +70,6 @@ class Board(object):
             
         if len(self.states) % 2 == 0 : square_state[3][:, :] = 1.0  # indicate the colour to play
         
-        print(square_state)
         return square_state[:, ::-1, :]
 
     def do_move(self, move):
