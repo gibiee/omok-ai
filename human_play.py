@@ -34,18 +34,18 @@ class Human(object):
 
 def run():
     n = 5
-    # width, height = 8, 8
-    # model_file = './model/best_policy_8_8_5.model'
-    width, height = 15, 15
-    model_file = './model/policy_1300.model'
+    width, height = 8, 8
+    model_file = './model/best_policy_8_8_5.model'
     # width, height = 15, 15
-    # model_file = './model/policy_9_9_150.model'
+    # model_file = './model/policy_1300.model'
+    # width, height = 9,9
+    # model_file = './model/policy_9_9_1000.model'
     
     board = Board(width=width, height=height, n_in_row=n)
     game = Game(board)
 
     # 이미 제공된 model을 불러와서 pure numpy로 작성된 MCTS player에 넣는다.
-    policy_param = pickle.load(open(model_file, 'rb'))
+    policy_param = pickle.load(open(model_file, 'rb'), encoding='bytes')
 
     # 학습된 policy_value_net를 불러온다.
     best_policy = PolicyValueNetNumpy(width, height, policy_param)
@@ -61,7 +61,7 @@ def run():
     # start_player=1 → AI 선공
     game.start_play(human, mcts_player, start_player=0, is_shown=1)   
     
-    #game.start_play(human, human2, start_player=0, is_shown=1)
+    # game.start_play(human, human2, start_player=0, is_shown=1)
 
 if __name__ == '__main__':
     run()
