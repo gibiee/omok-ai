@@ -20,13 +20,15 @@ class TreeNode(object):
         self._u = 0
         self._P = prior_p
 
-    def expand(self, action_priors):
+    def expand(self, action_priors, forbidden_moves):
         """Expand tree by creating new children.
         action_priors: a list of tuples of actions and their prior probability according to the policy function.
         """
         for action, prob in action_priors:
-            if action not in self._children:
-                self._children[action] = TreeNode(self, prob)
+            # 금수 위치는 트리 탐색을 하지 않도록 
+            if action not in forbidden_moves :
+                if action not in self._children :
+                    self._children[action] = TreeNode(self, prob)
 
     def select(self, c_puct):
         """Select action among children that gives maximum action value Q plus bonus u(P).
@@ -102,7 +104,7 @@ class MCTS(object):
         # for the current player.
         action_probs, leaf_value = self._policy(state)
         end, winner = state.game_end()
-        if not end : node.expand(action_probs)
+        if not end : node.expand(action_probs, state.forbidden_moves)
         else:
             # for end state，return the "true" leaf_value
             if winner == -1:  # tie
@@ -118,6 +120,7 @@ class MCTS(object):
             self._playout(state_copy)
 
         act_visits = [(act, node._n_visits) for act, node in self._root._children.items()]
+        # print(act_visits) # 착수 예정 위치와 visits 횟수
 
         # 금수 위치는 착수 확률에서 제외한다.
         if state.is_you_black() :

@@ -16,10 +16,27 @@ class Board(object):
         self.current_player = self.players[start_player]  # current_player = 1 → 사람 / 2 → AI
         self.last_move, self.last_loc = -1, -1
         
-        # states : 딕셔너리 / key:보드상에서의 좌표, value:플레이어 번호
-        # states_loc : 전체적인 관점에서 보드의 상태
         self.states, self.states_loc = {}, [[0] * self.width for _ in range(self.height)]
-        self.forbidden_locations = []
+        self.forbidden_locations, self.forbidden_moves = [], []
+        
+        """금수 판정 디버그용
+        self.states = {32:1, 47:1, 63:1, 64:1}
+        self.states_loc = list(
+        [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]] )"""
 
     def move_to_location(self, move):
         """ 3*3 보드를 예로 들면 : move 5 는 좌표 (1,2)를 의미한다.
@@ -104,10 +121,11 @@ class Board(object):
     def get_current_player(self):
         return self.current_player
     
-    def set_forbidden_locations(self) :
+    def set_forbidden(self) :
         # forbidden_locations : 흑돌 기준에서 금수의 위치
         rule = Renju_Rule(self.states_loc, self.width)
         self.forbidden_locations = rule.get_forbidden_points(stone=1)
+        self.forbidden_moves = [self.location_to_move(loc) for loc in self.forbidden_locations]
         
     def is_you_black(self) :
         # order, current_player
@@ -123,7 +141,7 @@ class Board_9_9(Board) :
     def __init__(self, board) :
         self.width, self.height, self.n_in_row = 9, 9, 5
         self.order, self.current_player = board.order, board.current_player
-        self.forbidden_locations = []
+        self.forbidden_locations, self.forbidden_moves = [], []
         self.players = board.players
         self.last_move, self.last_loc = board.last_move, board.last_loc
         
@@ -163,9 +181,13 @@ class Board_9_9(Board) :
             if y1 <= locY <= y2 and x1 <= locX <= x2 :
                 f_loc = (locY - y1, locX - x1)
                 self.forbidden_locations.append(f_loc)
+                self.forbidden_moves = self.location_to_move(self.forbidden_locations)
         
-        print(f"보드 forbidden = {board.forbidden_locations}")
-        print(f"자른 forbidden = {self.forbidden_locations}")
+        print(f"보드 f_loc = {board.forbidden_locations}")
+        print(f"자른 f_loc = {self.forbidden_locations}")
+        
+        print(f"보드 f_moves = {board.forbidden_moves}")
+        print(f"자른 f_moves = {self.forbidden_moves}")
 
 class Game(object):
     def __init__(self, board, **kwargs):
@@ -215,7 +237,7 @@ class Game(object):
         players = {p1: player1, p2: player2}
         while True:
             # 흑돌일 때, 금수 위치 확인하기
-            if self.board.is_you_black() : self.board.set_forbidden_locations()
+            if self.board.is_you_black() : self.board.set_forbidden()
             if is_shown : self.graphic(self.board, player1.player, player2.player)
                 
             current_player = self.board.get_current_player()
@@ -239,7 +261,7 @@ class Game(object):
         states, mcts_probs, current_players = [], [], []
         while True:
             # 흑돌일 때, 금수 위치 확인하기
-            if self.board.is_you_black() : self.board.set_forbidden_locations()
+            if self.board.is_you_black() : self.board.set_forbidden()
             if is_shown : self.graphic(self.board, p1, p2)
                 
             move, move_probs = player.get_action(self.board, temp=temp, return_prob=1)
