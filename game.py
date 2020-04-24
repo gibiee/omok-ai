@@ -9,17 +9,17 @@ class Board(object):
         self.width = int(kwargs.get('width', 15))
         self.height = int(kwargs.get('height', 15))
         self.n_in_row = int(kwargs.get('n_in_row', 5))
+        self.players = [1, 2]  # player1 and player2
+
+    def init_board(self, start_player=0) :
+        self.order = start_player # order = 0 → 사람 선공(흑돌) / 1 → AI 선공(흑돌)
+        self.current_player = self.players[start_player]  # current_player = 1 → 사람 / 2 → AI
+        self.last_move, self.last_loc = -1, -1
         
         # states : 딕셔너리 / key:보드상에서의 좌표, value:플레이어 번호
         # states_loc : 전체적인 관점에서 보드의 상태
         self.states, self.states_loc = {}, [[0] * self.width for _ in range(self.height)]
-        self.players = [1, 2]  # player1 and player2
         self.forbidden_locations = []
-
-    def init_board(self, start_player=0):     
-        self.order = start_player # order = 0 → 사람 선공(흑돌) / 1 → AI 선공(흑돌)
-        self.current_player = self.players[start_player]  # current_player = 1 → 사람 / 2 → AI
-        self.last_move, self.last_loc = -1, -1
 
     def move_to_location(self, move):
         """ 3*3 보드를 예로 들면 : move 5 는 좌표 (1,2)를 의미한다.
