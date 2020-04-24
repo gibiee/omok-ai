@@ -58,7 +58,7 @@ class PolicyValueNet():
         output: a list of (action, probability) tuples for each available
             action and the score of the board state
         """
-        legal_positions = list(set(range(board_width*board_height)) - set(board.states.keys()))
+        legal_positions = list(set(range(board.width*board.height)) - set(board.states.keys()))
         current_state = board.current_state()
         act_probs, value = self.policy_value(current_state.reshape(-1, 4, self.board_width, self.board_height))
         act_probs = zip(legal_positions, act_probs.flatten()[legal_positions])
