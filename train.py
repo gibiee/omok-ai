@@ -110,25 +110,14 @@ class TrainPipeline():
                 # win_ratio = self.policy_evaluate()
                 self.policy_value_net.save_model(f'{model_path}policy_{self.train_num}.model')
                 pickle.dump(self, open(f'{train_path}train_{self.train_num}.pickle', 'wb'), protocol=2)
+                
+            if (i+1) == 5000 : break
 
 if __name__ == '__main__':
     print(f"★ 학습시작 : {datetime.now()}")
     
     init_num = int(input('현재까지 저장된 모델의 학습 수 : '))
     if init_num == 0 or init_num == None : training_pipeline = TrainPipeline()
-    else :
-        training_pipeline = pickle.load(open(f'{train_path}train_{init_num}.pickle', 'rb'))
-        
-        if 'states_loc' not in vars(training_pipeline.board) :
-            print("변수 보정 작업 : training_pipeline.board.states_loc")
-            training_pipeline.board.states_loc = training_pipeline.board.board_state
-            del training_pipeline.board.board_state
-        if 'last_loc' not in vars(training_pipeline.board) :
-            print("변수 보정 작업 : training_pipeline.board.last_loc")
-            training_pipeline.board.last_loc = training_pipeline.board.move_to_location(training_pipeline.board.last_move)
-        if 'availables' in vars(training_pipeline.board) :
-            print("변수 보정 작업 : training_pipeline.board.availables")
-            del training_pipeline.board.availables
-      
+    else : training_pipeline = pickle.load(open(f'{train_path}train_{init_num}.pickle', 'rb'))
     training_pipeline.run()
     
