@@ -34,10 +34,10 @@ def run():
     n = 5
     # width, height = 8, 8
     # model_file = './model/best_policy_8_8_5.model'
-    width, height = 15, 15
-    model_file = './model/policy_500.model'
-    # width, height = 9,9
-    # model_file = './model/policy_9_9_1000.model'
+    # width, height = 15, 15
+    # model_file = './model/policy_2500.model'
+    width, height = 9,9
+    model_file = './model/policy_9_9_3000.model'
     
     board = Board(width=width, height=height, n_in_row=n)
     game = Game(board)
