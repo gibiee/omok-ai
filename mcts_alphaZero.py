@@ -119,14 +119,8 @@ class MCTS(object):
             self._playout(state_copy)
 
         act_visits = [(act, node._n_visits) for act, node in self._root._children.items()]
-        # print(act_visits) # 착수 예정 위치와 visits 횟수
+        # print([(state.move_to_location(m),v) for m,v in act_visits])
 
-        # 금수 위치는 착수 확률에서 제외한다.
-        if state.is_you_black() :
-            for loc in state.forbidden_locations :
-                forbidden_move = state.location_to_move(loc)
-                act_visits = [(m,v) for m,v in act_visits if m != forbidden_move]
-        
         # acts = 위치번호 / visits = 방문횟수
         acts, visits = zip(*act_visits)
         act_probs = softmax(1.0/temp * np.log(np.array(visits) + 1e-10))
@@ -170,9 +164,10 @@ class MCTSPlayer(object):
                 print("★★★★★ 학습할 때는 여기 수행하면 안됨!")
                 move = np.random.choice(acts, p=probs) # 확률론적인 방법
                 # move = acts[np.argmax(probs)] # 결정론적인 방법
-                cut_location = board.move_to_location(move)
-                location = [cut_location[0] + board.bias_y, cut_location[1] + board.bias_x]
-                move = location[0]*15 + location[1]
+                
+                # cut_location = board.move_to_location(move)
+                # location = [cut_location[0] + board.bias_y, cut_location[1] + board.bias_x]
+                # move = location[0]*15 + location[1]
                 self.mcts.update_with_move(-1)
 
             if return_prob : return move, move_probs

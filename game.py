@@ -19,8 +19,8 @@ class Board(object):
         self.states, self.states_loc = {}, [[0] * self.width for _ in range(self.height)]
         self.forbidden_locations, self.forbidden_moves = [], []
         
-        """
         # 금수 판정 디버그용
+        """
         self.states = {32:1, 47:1, 63:1, 64:1}
         self.states_loc = list(
         [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -120,7 +120,8 @@ class Board(object):
     def set_forbidden(self) :
         # forbidden_locations : 흑돌 기준에서 금수의 위치
         rule = Renju_Rule(self.states_loc, self.width)
-        self.forbidden_locations = rule.get_forbidden_points(stone=1)
+        if self.order == 0 : self.forbidden_locations = rule.get_forbidden_points(stone=1)
+        else : self.forbidden_locations = rule.get_forbidden_points(stone=2)
         self.forbidden_moves = [self.location_to_move(loc) for loc in self.forbidden_locations]
         
     def is_you_black(self) :
@@ -244,9 +245,9 @@ class Game(object):
             if current_player == 1 : # 사람일 때
                 move = player_in_turn.get_action(self.board)
             else : # AI일 때
-                cut_board = Board_9_9(self.board)
-                move = player_in_turn.get_action(cut_board)
-                print(f"move = {move}" )  # 추후에 bias 적용할것
+                # cut_board = Board_9_9(self.board)
+                # move = player_in_turn.get_action(cut_board)
+                move = player_in_turn.get_action(self.board)
                 
             self.board.do_move(move)
             end, winner = self.board.game_end()
