@@ -19,7 +19,8 @@ class Board(object):
         self.states, self.states_loc = {}, [[0] * self.width for _ in range(self.height)]
         self.forbidden_locations, self.forbidden_moves = [], []
         
-        """금수 판정 디버그용
+        """
+        # 금수 판정 디버그용
         self.states = {32:1, 47:1, 63:1, 64:1}
         self.states_loc = list(
         [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -39,13 +40,9 @@ class Board(object):
          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]] )"""
 
     def move_to_location(self, move):
-        """ 3*3 보드를 예로 들면 : move 5 는 좌표 (1,2)를 의미한다.
-        0 1 2
-        3 4 5
-        6 7 8
-        """
-        h = move // self.width
-        w = move % self.width
+        """ 3*3 보드를 예로 들면 : move 5 는 좌표 (1,2)를 의미한다.""" # ex) 0 1 2
+        h = move // self.width                                      #     3 4 5
+        w = move % self.width                                       #     6 7 8
         return [h, w]
 
     def location_to_move(self, location):
@@ -57,8 +54,7 @@ class Board(object):
 
     def current_state(self):
         """현재 플레이어의 관점에서 보드 상태(state)를 return한다.
-        state shape: 4 * [width*height]
-        """
+        state shape: 4 * [width*height] """
         square_state = np.zeros((4, self.width, self.height))
         if self.states:
             moves, players = np.array(list(zip(*self.states.items())))
@@ -143,7 +139,6 @@ class Board_9_9(Board) :
         self.order, self.current_player = board.order, board.current_player
         self.forbidden_locations, self.forbidden_moves = [], []
         self.players = board.players
-        self.last_move, self.last_loc = board.last_move, board.last_loc
         
         if board.last_loc == -1 : last_y, last_x = 7,7
         else : last_y, last_x = board.last_loc
@@ -157,14 +152,12 @@ class Board_9_9(Board) :
         else : x1, x2 = 6,14
 
         self.bias_y, self.bias_x = y1, x1
+        self.last_loc = [last_y - self.bias_y, last_x - self.bias_x]
+        self.last_move = self.location_to_move(self.last_loc)
+        
         self.states = {}
         self.states_loc = np.array(board.states_loc)[y1:y2+1, x1:x2+1].tolist()
-        
-        print("원래 보드")
-        print(np.array(board.states_loc))
-        print("자른보드", y1,y2,x1,x2)
-        print(np.array(self.states_loc))
-        
+
         m = 0
         player = [[1,2],[2,1]]
         for y in range(9) :
@@ -172,22 +165,27 @@ class Board_9_9(Board) :
                 if self.states_loc[y][x] == 1 : self.states[m] = player[board.order][0]
                 elif self.states_loc[y][x] == 2 : self.states[m] = player[board.order][1]
                 m += 1
-                    
-        print(f"보드 states = {board.states}")
-        print(f"자른 states = {self.states}")
-        
+
         # 금수가 자른 보드 9x9 내에 있는지 확인
         for locY, locX in board.forbidden_locations :
             if y1 <= locY <= y2 and x1 <= locX <= x2 :
                 f_loc = (locY - y1, locX - x1)
                 self.forbidden_locations.append(f_loc)
-                self.forbidden_moves = self.location_to_move(self.forbidden_locations)
+                self.forbidden_moves.append(self.location_to_move(f_loc))
         
-        print(f"보드 f_loc = {board.forbidden_locations}")
-        print(f"자른 f_loc = {self.forbidden_locations}")
+        print("원래 보드")
+        print(np.array(board.states_loc))
+        print("자른보드", y1,y2,x1,x2)
+        print(np.array(self.states_loc))
         
-        print(f"보드 f_moves = {board.forbidden_moves}")
-        print(f"자른 f_moves = {self.forbidden_moves}")
+        print(f"보드 states = {board.states}")
+        print(f"자른 states = {self.states}")
+        
+        print(f"보드 last = {board.last_loc}, {board.last_move}")
+        print(f"자른 last = {self.last_loc}, {self.last_move}")
+        
+        print(f"보드 forbidden = {board.forbidden_locations}, {board.forbidden_moves}")
+        print(f"자른 forbidden = {self.forbidden_locations}, {self.forbidden_moves}")
 
 class Game(object):
     def __init__(self, board, **kwargs):
@@ -242,9 +240,14 @@ class Game(object):
                 
             current_player = self.board.get_current_player()
             player_in_turn = players[current_player]
-            # test = Board_9_9(self.board)
-            # move = player_in_turn.get_action(test) # 추후에 bias 적용할것
-            move = player_in_turn.get_action(self.board)
+            
+            if current_player == 1 : # 사람일 때
+                move = player_in_turn.get_action(self.board)
+            else : # AI일 때
+                cut_board = Board_9_9(self.board)
+                move = player_in_turn.get_action(cut_board)
+                print(f"move = {move}" )  # 추후에 bias 적용할것
+                
             self.board.do_move(move)
             end, winner = self.board.game_end()
             if end:

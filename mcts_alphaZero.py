@@ -167,9 +167,12 @@ class MCTSPlayer(object):
                 move = np.random.choice(acts, p=0.75*probs + 0.25*np.random.dirichlet(0.3*np.ones(len(probs))))
                 self.mcts.update_with_move(move)
             else:
+                print("★★★★★ 학습할 때는 여기 수행하면 안됨!")
                 move = np.random.choice(acts, p=probs) # 확률론적인 방법
                 # move = acts[np.argmax(probs)] # 결정론적인 방법
-                location = board.move_to_location(move)
+                cut_location = board.move_to_location(move)
+                location = [cut_location[0] + board.bias_y, cut_location[1] + board.bias_x]
+                move = location[0]*15 + location[1]
                 self.mcts.update_with_move(-1)
 
             if return_prob : return move, move_probs
