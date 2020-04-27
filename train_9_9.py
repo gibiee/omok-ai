@@ -111,7 +111,7 @@ class TrainPipeline():
                 self.policy_value_net.save_model(f'{model_path}policy_{self.train_num}.model')
                 pickle.dump(self, open(f'{train_path}train_{self.train_num}.pickle', 'wb'), protocol=2)
             
-            if (i+1) == 5000 : break
+            if (self.train_num) == 10000 : break
 
 if __name__ == '__main__':
     print(f"★ 학습시작 : {datetime.now()}")
