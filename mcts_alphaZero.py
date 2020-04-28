@@ -119,7 +119,7 @@ class MCTS(object):
             self._playout(state_copy)
 
         act_visits = [(act, node._n_visits) for act, node in self._root._children.items()]
-        # print([(state.move_to_location(m),v) for m,v in act_visits])
+        print([(state.move_to_location(m),v) for m,v in act_visits])
 
         # acts = 위치번호 / visits = 방문횟수
         acts, visits = zip(*act_visits)
@@ -161,11 +161,11 @@ class MCTSPlayer(object):
                 move = np.random.choice(acts, p=0.75*probs + 0.25*np.random.dirichlet(0.3*np.ones(len(probs))))
                 self.mcts.update_with_move(move)
             else:
-                print("★★★★★ 학습할 때는 여기 수행하면 안됨!")
                 move = np.random.choice(acts, p=probs) # 확률론적인 방법
                 # move = acts[np.argmax(probs)] # 결정론적인 방법
                 
                 # cut_location = board.move_to_location(move)
+                # print(f"자른 보드 내에 착수 : {cut_location}")
                 # location = [cut_location[0] + board.bias_y, cut_location[1] + board.bias_x]
                 # move = location[0]*15 + location[1]
                 self.mcts.update_with_move(-1)

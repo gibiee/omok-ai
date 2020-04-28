@@ -38,7 +38,6 @@ class TrainPipeline():
         
         # policy-value net에서 학습 시작
         self.policy_value_net = PolicyValueNet(self.board_width, self.board_height)
-        
         self.mcts_player = MCTSPlayer(self.policy_value_net.policy_value_fn, c_puct=self.c_puct, n_playout=self.n_playout, is_selfplay=1)
 
     def get_equi_data(self, play_data):
