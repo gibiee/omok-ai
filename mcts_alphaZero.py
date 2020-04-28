@@ -119,7 +119,7 @@ class MCTS(object):
             self._playout(state_copy)
 
         act_visits = [(act, node._n_visits) for act, node in self._root._children.items()]
-        print([(state.move_to_location(m),v) for m,v in act_visits])
+        # print([(state.move_to_location(m),v) for m,v in act_visits])
 
         # acts = 위치번호 / visits = 방문횟수
         acts, visits = zip(*act_visits)
