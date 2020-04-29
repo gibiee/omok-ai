@@ -38,6 +38,7 @@ def run():
     # model_file = './model/policy_4000.model'
     width, height = 9, 9
     model_file = './model/policy_9_9_6500.model'
+    model_file = './omok_AI/model/policy_9_9_6500.model'
     
     # width, height = 15, 15
     # model_file = './model/policy_9_9_6500.model'
