@@ -8,7 +8,7 @@
 - [An implementation of the AlphaZero algorithm for Gomoku](https://github.com/junxiaosong/AlphaZero_Gomoku)
 - [렌주룰 판별](https://blog.naver.com/dnpc7848/221506783416)
 
-## 참고자료
+## 참고 자료
 이론적으로 참고한 자료들입니다.
 - [강화학습의 개념](https://jeinalog.tistory.com/20)
 - [DQN과 Policy Gradient의 차이](https://gist.github.com/ByungSunBae/56009ed6ea31bb91a236e67bcb3245a2)
