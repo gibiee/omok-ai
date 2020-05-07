@@ -200,7 +200,7 @@ class Game(object):
         width = board.width
         height = board.height
 
-        # clear_output(wait=True)
+        clear_output(wait=True)
         # os.system('cls')
         
         print()
