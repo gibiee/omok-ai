@@ -34,8 +34,8 @@ def run():
     n = 5
     width, height = 9, 9
 
-    print("black : mcts_player1 / 4000")
-    print("white : mcts_player2 / 10000")
+    print("흑돌(black) : 4000")
+    print("백돌(white) : 10000")
     policy_param1 = pickle.load(open('./omok_AI/model/policy_9_9_4000.model', 'rb'), encoding='bytes')
     policy_param2 = pickle.load(open('./omok_AI/model/policy_9_9_10000.model', 'rb'), encoding='bytes')
 
@@ -50,7 +50,7 @@ def run():
         best_policy2 = PolicyValueNetNumpy(width, height, policy_param2)
         mcts_player2 = MCTSPlayer(best_policy2.policy_value_fn, c_puct=5, n_playout=400) # n_playout값 : 성능
         
-        result = game.start_play(mcts_player1, mcts_player2, start_player=0, is_shown=1)   
+        result = game.start_play(mcts_player1, mcts_player2, start_player=0, is_shown=0)   
         if result == 1 : black += 1
         elif result == 2 : white += 1
 
