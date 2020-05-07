@@ -1,11 +1,10 @@
-# omok_AI
-오목 AI(인공지능) 구현 프로젝트 입니다.
+### 오목 AI(인공지능) 구현 프로젝트 입니다.
 
 ## 플레이
 
 
 ## 참고 프로젝트
-아래 유사 프로젝트들의 소스코드를 적극 활용하였습니다.
+유사 프로젝트들의 소스코드를 적극 활용하였습니다.
 - [An implementation of the AlphaZero algorithm for Gomoku](https://github.com/junxiaosong/AlphaZero_Gomoku)
 - [렌주룰 판별](https://blog.naver.com/dnpc7848/221506783416)
 
