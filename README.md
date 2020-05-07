@@ -1,4 +1,4 @@
-### 오목 AI(인공지능) 구현 프로젝트 입니다.
+[알파고(AlphaGo)](https://www.nature.com/articles/nature16961)와 [알파고 제로(AlphaGo Zero)](https://www.nature.com/articles/nature24270)의 방법론을 모방하여 오목 인공지능(AI)을 구현하는 프로젝트입니다.
 
 ## 플레이
 [play.ipynb](https://github.com/gibiee/omok_AI/blob/master/play.ipynb)에서 "Open in Colab" 버튼을 누르고 코드들을 순서대로 실행시키면 플레이할 수 있습니다.
