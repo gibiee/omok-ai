@@ -1,7 +1,7 @@
 ### 오목 AI(인공지능) 구현 프로젝트 입니다.
 
 ## 플레이
-
+[play.ipynb](https://github.com/gibiee/omok_AI/blob/master/play.ipynb)에서 "Open in Colab" 버튼을 누르고 코드들을 순서대로 실행시키면 플레이할 수 있습니다.
 
 ## 참고 프로젝트
 유사 프로젝트들의 소스코드를 적극 활용하였습니다.
