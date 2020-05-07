@@ -1,7 +1,6 @@
 import pickle
 from game import Board, Game
-from mcts_alphaZero1 import MCTSPlayer as MCTSPlayer1 # 확률론적
-from mcts_alphaZero2 import MCTSPlayer as MCTSPlayer2 # 결정론적
+from mcts_alphaZero import MCTSPlayer
 from policy_value_net_numpy import PolicyValueNetNumpy
 
 class Human(object):
@@ -34,22 +33,24 @@ class Human(object):
 def run():
     n = 5
     width, height = 9, 9
-    print("mcts_player1 : 10000 / 확률론적")
-    print("mcts_player2 : 10000 / 결정론적")
+
+    print("black : mcts_player1 / 4000")
+    print("white : mcts_player2 / 10000")
+    policy_param1 = pickle.load(open('./omok_AI/model/policy_9_9_4000.model', 'rb'), encoding='bytes')
+    policy_param2 = pickle.load(open('./omok_AI/model/policy_9_9_10000.model', 'rb'), encoding='bytes')
+
     black, white = 0, 0
-    for i in range(10) :
+    for i in range(5) :
         board = Board(width=width, height=height, n_in_row=n)
         game = Game(board)
 
-        policy_param1 = pickle.load(open('./omok_AI/model/policy_9_9_10000.model', 'rb'), encoding='bytes')
         best_policy1 = PolicyValueNetNumpy(width, height, policy_param1)
-        mcts_player1 = MCTSPlayer1(best_policy1.policy_value_fn, c_puct=5, n_playout=400) # n_playout값 : 성능
+        mcts_player1 = MCTSPlayer(best_policy1.policy_value_fn, c_puct=5, n_playout=400) # n_playout값 : 성능
 
-        policy_param2 = pickle.load(open('./omok_AI/model/policy_9_9_10000.model', 'rb'), encoding='bytes')
         best_policy2 = PolicyValueNetNumpy(width, height, policy_param2)
-        mcts_player2 = MCTSPlayer2(best_policy2.policy_value_fn, c_puct=5, n_playout=400) # n_playout값 : 성능
+        mcts_player2 = MCTSPlayer(best_policy2.policy_value_fn, c_puct=5, n_playout=400) # n_playout값 : 성능
         
-        result = game.start_play(mcts_player1, mcts_player2, start_player=0, is_shown=0)   
+        result = game.start_play(mcts_player1, mcts_player2, start_player=0, is_shown=1)   
         if result == 1 : black += 1
         elif result == 2 : white += 1
 

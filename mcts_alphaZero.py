@@ -162,12 +162,6 @@ class MCTSPlayer(object):
                 self.mcts.update_with_move(move)
             else:
                 move = np.random.choice(acts, p=probs) # 확률론적인 방법
-                # move = acts[np.argmax(probs)] # 결정론적인 방법
-                
-                # cut_location = board.move_to_location(move)
-                # print(f"자른 보드 내에 착수 : {cut_location}")
-                # location = [cut_location[0] + board.bias_y, cut_location[1] + board.bias_x]
-                # move = location[0]*15 + location[1]
                 self.mcts.update_with_move(-1)
 
             if return_prob : return move, move_probs
