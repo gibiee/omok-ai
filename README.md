@@ -1,15 +1,20 @@
 [알파고(AlphaGo)](https://www.nature.com/articles/nature16961)와 [알파고 제로(AlphaGo Zero)](https://www.nature.com/articles/nature24270)의 방법론을 모방하여 오목 인공지능(AI)을 구현하는 프로젝트입니다.
 
-## 플레이
-[play.ipynb](https://github.com/gibiee/omok_AI/blob/master/play.ipynb)에서 "Open in Colab" 버튼을 누르고 코드들을 순서대로 실행시키면 플레이할 수 있습니다.
-
-## 참고 프로젝트
-유사 프로젝트들의 소스코드를 적극 활용하였습니다.
+아래 유사 프로젝트들의 소스코드를 적극 활용하였습니다.
 - [An implementation of the AlphaZero algorithm for Gomoku](https://github.com/junxiaosong/AlphaZero_Gomoku)
 - [렌주룰 판별](https://blog.naver.com/dnpc7848/221506783416)
 
+## 프로젝트 실행 과정
+실행 과정은 학습(train)과 플레이(play) 두 과정으로 구분됩니다.
+- 학습(train)
+  - 딥러닝을 활용한 학습을 반복하여 모델(model)을 생성합니다.
+  - 과정 생략 가능. (model 폴더에 이미 생성된 모델이 저장되어 있음)
+- 플레이(play)
+  - 플레이어(사람)은 학습된 모델을 기반으로 하는 AI(인공지능)와 오목을 플레이할 수 있습니다.
+  - [play.ipynb](https://github.com/gibiee/omok_AI/blob/master/play.ipynb)에서 "Open in Colab" 버튼을 누르고 코드들을 순서대로 실행시키면 Google Colab 환경에서 플레이할 수 있습니다.
+
 ## 방법론
-주요 방법론은 다음과 같이 3가지입니다.
+사용한 주요 방법론은 다음과 같이 3가지입니다.
 - 정책망(Policy Network)
   - 알파고(AlphaGo)에서 사용된 방법론으로, 현재 오목판의 상태(state)를 입력받아 각 위치에 대한 기댓값을 계산합니다.
   - 기댓값이 크다는 것은 자신 또는 상대가 착수하기 좋은 위치를 의미합니다.
@@ -18,6 +23,9 @@
   - 인간의 플레이 데이터를 전혀 사용하지 않았음에도, 알파고 제로는 알파고보다 뛰어난 성능을 보여주었습니다.
 - MCTS(Monte Carlo Tree Search : 몬테카를로 트리 탐색) 알고리즘
   - 알파고와 알파고 제로에서 사용된 방법론으로, 다양한 경우의 수를 탐색하여 최종적으로 착수 위치를 결정합니다.
+
+## 각 구성 파일들의 역할
+(추후 수정 예정)
 
 ## 참고 자료
 전체적인 배경을 파악하는데 유용합니다.
