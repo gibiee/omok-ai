@@ -35,7 +35,8 @@ def run():
     # width, height = 15, 15
     # model_file = './model/policy_5000.model'
     width, height = 9, 9
-    model_file = './model/policy_9_9_10000.model'
+    # model_file = './model/policy_9_9_10000.model'
+    model_file = '.omok_AI/model/policy_9_9_10000.model'
     
     board = Board(width=width, height=height, n_in_row=n)
     game = Game(board)
