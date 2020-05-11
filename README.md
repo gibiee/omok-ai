@@ -9,6 +9,10 @@
 - [렌주룰 판별](https://blog.naver.com/dnpc7848/221506783416)
 
 ## 참고 자료
+전체적인 배경을 파악하는데 유용합니다.
+- [알파고 - 나무위키](https://namu.wiki/w/%EC%95%8C%ED%8C%8C%EA%B3%A0)
+- [오목(렌주룰) - 나무위키](https://namu.wiki/w/%EC%98%A4%EB%AA%A9?from=%EC%98%A4%EB%AA%A9%28%EA%B2%8C%EC%9E%84%29#s-2.3)
+
 이론적으로 참고한 자료들입니다.
 - [강화학습의 개념](https://jeinalog.tistory.com/20)
 - [DQN과 Policy Gradient의 차이](https://gist.github.com/ByungSunBae/56009ed6ea31bb91a236e67bcb3245a2)
