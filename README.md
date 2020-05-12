@@ -12,6 +12,9 @@
 - 플레이(play)
   - 플레이어(사람)은 학습된 모델을 기반으로 하는 AI(인공지능)와 오목을 플레이할 수 있습니다.
   - [play.ipynb](https://github.com/gibiee/omok_AI/blob/master/play.ipynb)에서 "Open in Colab" 버튼을 통해 Google Colab 환경에서 플레이할 수 있습니다.
+  - 입력 예시   
+  <img src="https://user-images.githubusercontent.com/37574274/81725025-38745080-94c0-11ea-8db3-d4a421117e4b.png" width="80%"></img>
+
 
 ## 방법론
 사용한 주요 방법론은 다음과 같이 3가지입니다.
