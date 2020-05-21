@@ -8,14 +8,11 @@ from datetime import datetime
 import pickle
 import sys
 sys.setrecursionlimit(10**8)
-train_path = "./drive/My Drive/omok_AI/train/"
-model_path = "./drive/My Drive/omok_AI/model/"
 
 class TrainPipeline():
     def __init__(self):
         # 게임(오목)에 대한 변수들
-        self.board_width = 15
-        self.board_height = 15
+        self.board_width, self.board_height = input_size, input_size
         self.n_in_row = 5
         self.board = Board(width=self.board_width, height=self.board_height, n_in_row=self.n_in_row)
         self.game = Game(self.board)
@@ -38,6 +35,7 @@ class TrainPipeline():
         
         # policy-value net에서 학습 시작
         self.policy_value_net = PolicyValueNet(self.board_width, self.board_height)
+        
         self.mcts_player = MCTSPlayer(self.policy_value_net.policy_value_fn, c_puct=self.c_puct, n_playout=self.n_playout, is_selfplay=1)
 
     def get_equi_data(self, play_data):
@@ -106,17 +104,23 @@ class TrainPipeline():
             # 현재 model의 성능을 체크, 모델 속성을 저장
             if (i+1) % self.check_freq == 0:
                 print(f"★ {self.train_num}번째 batch에서 모델 저장 : {datetime.now()}")
-                # win_ratio = self.policy_evaluate()
-                self.policy_value_net.save_model(f'{model_path}policy_{self.train_num}.model')
-                pickle.dump(self, open(f'{train_path}train_{self.train_num}.pickle', 'wb'), protocol=2)
-                
-            if (self.train_num) == 5000 : break
+                self.policy_value_net.save_model(f'{model_path}policy_{input_size}_{self.train_num}.model')
+                pickle.dump(self, open(f'{train_path}train_{input_size}_{self.train_num}.pickle', 'wb'), protocol=2)
 
 if __name__ == '__main__':
-    print(f"★ 학습시작 : {datetime.now()}")
     
-    init_num = int(input('현재까지 저장된 모델의 학습 수 : '))
-    if init_num == 0 or init_num == None : training_pipeline = TrainPipeline()
-    else : training_pipeline = pickle.load(open(f'{train_path}train_{init_num}.pickle', 'rb'))
-    training_pipeline.run()
+    input_size = int(input("오목판의 크기를 입력하세요(9 or 15) : "))
+    
+    if input_size in [9, 15] :
+        train_path = f"./drive/My Drive/omok_AI/train_{input_size}/"
+        model_path = f"./drive/My Drive/omok_AI/model_{input_size}/"
+    
+        init_num = int(input('현재까지 저장된 모델의 학습 수 : '))
+        if init_num == 0 or init_num == None : training_pipeline = TrainPipeline()
+        else : training_pipeline = pickle.load(open(f'{train_path}train_{input_size}_{init_num}.pickle', 'rb'))
+
+        print(f"★ 학습시작 : {datetime.now()}")
+        training_pipeline.run()
+    else :
+        print("강제 종료")
     
