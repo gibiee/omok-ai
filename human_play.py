@@ -32,12 +32,17 @@ class Human(object):
 
 def run():
     n = 5
-    # width, height = 15, 15
-    # model_file = './model/policy_5000.model'
-    width, height = 9, 9
-    # model_file = './model/policy_9_9_10000.model'
-    model_file = './omok_AI/model/policy_9_9_10000.model'
+    size = int(input("보드 크기를 입력하세요.(9 or 15) : "))
+    if size in [9,15] : width, height = size, size
+    else : return "강제 종료"
     
+    hard = int(input("난이도를 입력하세요.(500 단위) : "))
+    if hard % 500 == 0 : model_file = f'./omok_AI/model/policy_{size}_{hard}.model'
+    else : return "강제 종료"
+    
+    order = int(input("자신이 선공(흑)인 경우에 0을, 후공(백)인 경우에 1을 입력하세요. : "))
+    if order not in [0,1] : return "강제 종료"
+
     board = Board(width=width, height=height, n_in_row=n)
     game = Game(board)
 
@@ -48,13 +53,9 @@ def run():
     mcts_player = MCTSPlayer(best_policy.policy_value_fn, c_puct=5, n_playout=400) # n_playout값 : 성능
     
     human = Human()
-    # human2 = Human()
     
-    # start_player=0 → 사람 선공
-    # start_player=1 → AI 선공
-    game.start_play(human, mcts_player, start_player=0, is_shown=1)   
-    
-    # game.start_play(human, human2, start_player=0, is_shown=1)
+    # start_player = 0 → 사람 선공 / 1 → AI 선공
+    game.start_play(human, mcts_player, start_player=order, is_shown=1)   
 
 if __name__ == '__main__':
     run()
