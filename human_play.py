@@ -36,11 +36,11 @@ def run():
     if size in [9,15] : width, height = size, size
     else : return "강제 종료"
     
-    hard = int(input("난이도를 입력하세요.(500 단위) : "))
-    if hard % 500 == 0 : model_file = f'./omok_AI/model/policy_{size}_{hard}.model'
-    else : return "강제 종료"
+    hard = int(input("난이도를 입력하세요. : "))
+    # model_file = f'./omok_AI/model/policy_{size}_{hard}.model'   # colab
+    model_file = f'./model/policy_{size}_{hard}.model'                 # local
     
-    order = int(input("자신이 선공(흑)인 경우에 0을, 후공(백)인 경우에 1을 입력하세요. : "))
+    order = int(input("자신이 선공(흑)인 경우에 0, 후공(백)인 경우에 1을 입력하세요. : "))
     if order not in [0,1] : return "강제 종료"
 
     board = Board(width=width, height=height, n_in_row=n)
