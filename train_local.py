@@ -108,7 +108,6 @@ class TrainPipeline():
                 pickle.dump(self, open(f'{train_path}/train_9_{self.train_num}.pickle', 'wb'), protocol=2)
 
 if __name__ == '__main__':
-    
     train_path = f"./save/train_9"
     model_path = f"./save/model_9"
     
