@@ -147,7 +147,7 @@ class Game(object):
         height = board.height
 
         clear_output(wait=True)
-        # os.system('cls')
+        os.system('cls')
         
         print()
         if board.order == 0 : 
