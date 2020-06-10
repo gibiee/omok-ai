@@ -54,7 +54,7 @@ def run():
     human = Human()
     
     # start_player = 0 → 사람 선공 / 1 → AI 선공
-    game.start_play(human, mcts_player, start_player=order, is_shown=1)   
+    game.start_play(human, mcts_player, start_player=order, is_shown=1)
 
 if __name__ == '__main__':
     run()
