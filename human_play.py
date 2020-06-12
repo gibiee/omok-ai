@@ -36,11 +36,11 @@ def run():
     width, height = 9, 9
     print("이 오목 인공지능은 9x9 환경에서 동작합니다.")
     
-    print("현재 가능한 난이도 목록 : [ 2000, 4000, 6000, 8000, 10000 ]")
+    print("현재 가능한 난이도 목록 : [ 2000, 4000, 6000, 8000, 10000, ??? ]")
     print("난이도를 입력하세요.")
     hard = int(input())
-    model_file = f'./omok_AI/model/policy_9_{hard}.model'    # colab
-    # model_file = f'./model/policy_9_{hard}.model'          # local
+    #model_file = f'./omok_AI/model/policy_9_{hard}.model'    # colab
+    model_file = f'./model/policy_9_{hard}.model'          # local
     
     print("자신이 선공(흑)인 경우에 0, 후공(백)인 경우에 1을 입력하세요.")
     order = int(input())
