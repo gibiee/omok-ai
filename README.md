@@ -11,6 +11,7 @@
   - 과정 생략 가능. (model 폴더에 이미 생성된 모델이 저장되어 있음)
 - 플레이(play)
   - 플레이어(사람)은 학습된 모델을 기반으로 하는 AI(인공지능)와 오목을 플레이할 수 있습니다.
+  - 오목 인공지능은 9x9 환경에서 동작합니다.
   - :star:**플레이 하는 방법**:star:
   - [play.ipynb](https://github.com/gibiee/omok_AI/blob/master/play.ipynb)에서 "Open in Colab" 버튼을 통해 Google Colab 환경에서 플레이할 수 있습니다. [[Direct Link](https://colab.research.google.com/github/gibiee/omok_AI/blob/master/play.ipynb)]
   - 입력 예시   
