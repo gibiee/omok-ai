@@ -40,7 +40,7 @@ def run():
     print("난이도를 입력하세요.")
     hard = int(input())
     model_file = f'./omok_AI/model/policy_9_{hard}.model'    # colab
-    # model_file = f'./model/policy_9_{hard}.model'                 # local
+    # model_file = f'./model/policy_9_{hard}.model'          # local
     
     print("자신이 선공(흑)인 경우에 0, 후공(백)인 경우에 1을 입력하세요.")
     order = int(input())
