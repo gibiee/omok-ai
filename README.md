@@ -13,7 +13,7 @@
   - 플레이어(사람)은 학습된 모델을 기반으로 하는 AI(인공지능)와 오목을 플레이할 수 있습니다.
   - 오목 인공지능은 9x9 환경에서 동작합니다.
   - :star:**플레이 하는 방법**:star:
-  - [play.ipynb](https://github.com/gibiee/omok_AI/blob/master/play.ipynb)에서 "Open in Colab" 버튼을 통해 Google Colab 환경에서 플레이할 수 있습니다. [[Direct Link](https://colab.research.google.com/github/gibiee/omok_AI/blob/master/play.ipynb)]
+  - [play.ipynb](https://github.com/gibiee/omok_AI/blob/master/play.ipynb)에서 "Open in Colab" 버튼을 통해 Google Colab 환경에서 플레이할 수 있습니다. [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/gibiee/omok_AI/blob/master/play.ipynb)
   - 입력 예시   
   <img src="https://user-images.githubusercontent.com/37574274/81725519-eb44ae80-94c0-11ea-97a3-ee944e50af2b.png" width="80%"></img>
 
